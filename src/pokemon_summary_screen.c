@@ -951,6 +951,10 @@ static const u8 sText_HPType[] = _("HP TYPE: ");
 static const u8 sText_EVTotal[] = _("EV TOTAL: ");
 static const u8 sText_Slash510[] = _(" / 510");
 static const u8 sText_EVRemaining[] = _("REMAINING: ");
+static const u8 sText_MoveCategory[] = _("CATEGORY");
+static const u8 sText_SplitPhysical[] = _("PHYSICAL");
+static const u8 sText_SplitSpecial[] = _("SPECIAL");
+static const u8 sText_SplitStatus[] = _("STATUS");
 
 #define GetNumberRightAlign27(x) (27 - StringLength((x)) * 6)
 
@@ -3027,6 +3031,37 @@ static void PokeSum_PrintSelectedMoveStats(void)
                                      57, 15,
                                      sLevelNickTextColors[0], TEXT_SKIP_DRAW,
                                      sMonSummaryScreen->summary.moveAccuracyStrBufs[sMoveSelectionCursorPos]);
+        {
+            u16 moveId = sMonSummaryScreen->moveIds[sMoveSelectionCursorPos];
+            const u8 *splitText;
+            const u8 *splitColor;
+
+            if (gBattleMoves[moveId].split == SPLIT_PHYSICAL)
+            {
+                splitText = sText_SplitPhysical;
+                splitColor = sStatTextColors[1];
+            }
+            else if (gBattleMoves[moveId].split == SPLIT_SPECIAL)
+            {
+                splitText = sText_SplitSpecial;
+                splitColor = sStatTextColors[2];
+            }
+            else
+            {
+                splitText = sText_SplitStatus;
+                splitColor = sStatTextColors[0];
+            }
+
+            AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_TRAINER_MEMO], FONT_NORMAL,
+                                         115, 1,
+                                         sStatTextColors[0], TEXT_SKIP_DRAW,
+                                         sText_MoveCategory);
+
+            AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_TRAINER_MEMO], FONT_NORMAL,
+                                         115, 15,
+                                         splitColor, TEXT_SKIP_DRAW,
+                                         splitText);
+        }
 
         AddTextPrinterParameterized4(sMonSummaryScreen->windowIds[POKESUM_WIN_TRAINER_MEMO], FONT_NORMAL,
                                      7, 42,

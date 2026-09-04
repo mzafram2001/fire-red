@@ -4,6 +4,7 @@
 #include "global.h"
 #include "sprite.h"
 #include "constants/pokemon.h"
+#include "constants/battle.h"
 
 struct PokemonSubstruct0
 {
@@ -246,6 +247,7 @@ struct BattleMove
     u8 target;
     s8 priority;
     u8 flags;
+    u8 split;
 };
 
 #define SPINDA_SPOT_WIDTH 16
