@@ -945,12 +945,6 @@ static const u8 *GetStatTextColor(s8 natureMod)
 static const u8 sText_PageName_PokemonIVs[] = _("POKéMON IVs");
 static const u8 sText_PageName_PokemonEVs[] = _("POKéMON EVs");
 static const u8 sText_Controls_ModeToggle[] = _("{A_BUTTON}MODE");
-static const u8 sText_IVTotal[] = _("IV TOTAL: ");
-static const u8 sText_Slash186[] = _(" / 186");
-static const u8 sText_HPType[] = _("HP TYPE: ");
-static const u8 sText_EVTotal[] = _("EV TOTAL: ");
-static const u8 sText_Slash510[] = _(" / 510");
-static const u8 sText_EVRemaining[] = _("REMAINING: ");
 static const u8 sText_SplitPhysical[] = _("PHYSICAL");
 static const u8 sText_SplitSpecial[] = _("SPECIAL");
 static const u8 sText_SplitStatus[] = _("STATUS");
@@ -1235,7 +1229,6 @@ static void Task_InputHandler_Info(u8 taskId)
                     PokeSum_PrintRightPaneText();
                     PokeSum_PrintBottomPaneText();
                     PokeSum_PrintPageHeaderText(sMonSummaryScreen->curPageIndex);
-                    ShowOrHideExpBarObjs(sSkillsStatDisplayMode != SKILLS_MODE_STATS);
                     CopyWindowToVram(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], 2);
                     CopyWindowToVram(sMonSummaryScreen->windowIds[POKESUM_WIN_TRAINER_MEMO], 2);
                     CopyWindowToVram(sMonSummaryScreen->windowIds[POKESUM_WIN_PAGE_NAME], 2);
@@ -2594,9 +2587,10 @@ static void PrintSkillsPage(void)
         AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], FONT_NORMAL, 50 + sMonSkillsPrinterXpos->spAStr, 48, GetStatTextColor(GetNatureStatMod(nature, STAT_SPATK)), TEXT_SKIP_DRAW, sMonSummaryScreen->summary.statValueStrBufs[PSS_STAT_SPA]);
         AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], FONT_NORMAL, 50 + sMonSkillsPrinterXpos->spDStr, 61, GetStatTextColor(GetNatureStatMod(nature, STAT_SPDEF)), TEXT_SKIP_DRAW, sMonSummaryScreen->summary.statValueStrBufs[PSS_STAT_SPD]);
         AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], FONT_NORMAL, 50 + sMonSkillsPrinterXpos->speStr, 74, GetStatTextColor(GetNatureStatMod(nature, STAT_SPEED)), TEXT_SKIP_DRAW, sMonSummaryScreen->summary.statValueStrBufs[PSS_STAT_SPE]);
-        AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], FONT_NORMAL, 15 + sMonSkillsPrinterXpos->expStr, 87, sStatTextColors[0], TEXT_SKIP_DRAW, sMonSummaryScreen->summary.expPointsStrBuf);
-        AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], FONT_NORMAL, 15 + sMonSkillsPrinterXpos->toNextLevel, 100, sStatTextColors[0], TEXT_SKIP_DRAW, sMonSummaryScreen->summary.expToNextLevelStrBuf);
     }
+
+    AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], FONT_NORMAL, 15 + sMonSkillsPrinterXpos->expStr, 87, sStatTextColors[0], TEXT_SKIP_DRAW, sMonSummaryScreen->summary.expPointsStrBuf);
+    AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], FONT_NORMAL, 15 + sMonSkillsPrinterXpos->toNextLevel, 100, sStatTextColors[0], TEXT_SKIP_DRAW, sMonSummaryScreen->summary.expToNextLevelStrBuf);
 }
 
 #define GetMoveNamePrinterYpos(x) ((x) * 28 + 5)
@@ -2932,86 +2926,15 @@ static void PokeSum_PrintTrainerMemo_Egg(void)
 
 static void PokeSum_PrintExpPoints_NextLv(void)
 {
-    u8 strBuf[32];
-    u8 numBuf[16];
+    AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_TRAINER_MEMO], FONT_NORMAL,
+                                 26, 7,
+                                 sStatTextColors[0], TEXT_SKIP_DRAW,
+                                 gText_PokeSum_ExpPoints);
 
-    if (sSkillsStatDisplayMode == SKILLS_MODE_IVS)
-    {
-        u8 hpIv  = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_HP_IV);
-        u8 atkIv = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_ATK_IV);
-        u8 defIv = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_DEF_IV);
-        u8 spaIv = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_SPATK_IV);
-        u8 spdIv = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_SPDEF_IV);
-        u8 speIv = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_SPEED_IV);
-        u16 total = hpIv + atkIv + defIv + spaIv + spdIv + speIv;
-        u8 typeBits = ((hpIv & 1) << 0)
-                    | ((atkIv & 1) << 1)
-                    | ((defIv & 1) << 2)
-                    | ((speIv & 1) << 3)
-                    | ((spaIv & 1) << 4)
-                    | ((spdIv & 1) << 5);
-        u8 hpType = (15 * typeBits) / 63 + 1;
-        if (hpType >= TYPE_MYSTERY)
-            hpType++;
-
-        StringCopy(strBuf, sText_IVTotal);
-        ConvertIntToDecimalStringN(numBuf, total, STR_CONV_MODE_LEFT_ALIGN, 3);
-        StringAppend(strBuf, numBuf);
-        StringAppend(strBuf, sText_Slash186);
-        AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_TRAINER_MEMO], FONT_NORMAL,
-                                     20, 7,
-                                     sStatTextColors[0], TEXT_SKIP_DRAW,
-                                     strBuf);
-
-        StringCopy(strBuf, sText_HPType);
-        StringAppend(strBuf, gTypeNames[hpType]);
-        AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_TRAINER_MEMO], FONT_NORMAL,
-                                     20, 20,
-                                     sStatTextColors[0], TEXT_SKIP_DRAW,
-                                     strBuf);
-    }
-    else if (sSkillsStatDisplayMode == SKILLS_MODE_EVS)
-    {
-        u8 hpEv  = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_HP_EV);
-        u8 atkEv = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_ATK_EV);
-        u8 defEv = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_DEF_EV);
-        u8 spaEv = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_SPATK_EV);
-        u8 spdEv = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_SPDEF_EV);
-        u8 speEv = GetMonData(&sMonSummaryScreen->currentMon, MON_DATA_SPEED_EV);
-        u16 total = hpEv + atkEv + defEv + spaEv + spdEv + speEv;
-        s16 remain = 510 - total;
-        if (remain < 0)
-            remain = 0;
-
-        StringCopy(strBuf, sText_EVTotal);
-        ConvertIntToDecimalStringN(numBuf, total, STR_CONV_MODE_LEFT_ALIGN, 3);
-        StringAppend(strBuf, numBuf);
-        StringAppend(strBuf, sText_Slash510);
-        AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_TRAINER_MEMO], FONT_NORMAL,
-                                     20, 7,
-                                     sStatTextColors[0], TEXT_SKIP_DRAW,
-                                     strBuf);
-
-        StringCopy(strBuf, sText_EVRemaining);
-        ConvertIntToDecimalStringN(numBuf, remain, STR_CONV_MODE_LEFT_ALIGN, 3);
-        StringAppend(strBuf, numBuf);
-        AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_TRAINER_MEMO], FONT_NORMAL,
-                                     20, 20,
-                                     sStatTextColors[0], TEXT_SKIP_DRAW,
-                                     strBuf);
-    }
-    else
-    {
-        AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_TRAINER_MEMO], FONT_NORMAL,
-                                     26, 7,
-                                     sStatTextColors[0], TEXT_SKIP_DRAW,
-                                     gText_PokeSum_ExpPoints);
-
-        AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_TRAINER_MEMO], FONT_NORMAL,
-                                     26, 20,
-                                     sStatTextColors[0], TEXT_SKIP_DRAW,
-                                     gText_PokeSum_NextLv);
-    }
+    AddTextPrinterParameterized3(sMonSummaryScreen->windowIds[POKESUM_WIN_TRAINER_MEMO], FONT_NORMAL,
+                                 26, 20,
+                                 sStatTextColors[0], TEXT_SKIP_DRAW,
+                                 gText_PokeSum_NextLv);
 }
 
 static void PokeSum_PrintSelectedMoveStats(void)
