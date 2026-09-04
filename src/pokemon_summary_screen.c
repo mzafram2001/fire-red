@@ -2950,7 +2950,7 @@ static void PokeSum_PrintExpPoints_NextLv(void)
                     | ((speIv & 1) << 3)
                     | ((spaIv & 1) << 4)
                     | ((spdIv & 1) << 5);
-        u8 hpType = ((NUMBER_OF_MON_TYPES - 3) * typeBits) / 63 + 1;
+        u8 hpType = (15 * typeBits) / 63 + 1;
         if (hpType >= TYPE_MYSTERY)
             hpType++;
 
