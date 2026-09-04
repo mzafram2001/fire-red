@@ -31,6 +31,7 @@ static EWRAM_DATA struct ObjectEvent * sPlayerObjectPtr = NULL;
 static EWRAM_DATA u8 sTeleportSavedFacingDirection = DIR_NONE;
 EWRAM_DATA struct ObjectEvent gObjectEvents[OBJECT_EVENTS_COUNT] = {};
 EWRAM_DATA struct PlayerAvatar gPlayerAvatar = {};
+EWRAM_DATA bool8 gAutoRunDisabled = FALSE;
 
 static u8 ObjectEventCB2_NoMovement2(struct ObjectEvent * object, struct Sprite *sprite);
 static bool8 TryUpdatePlayerSpinDirection(void);
@@ -513,22 +514,32 @@ static void PlayerNotOnBikeMoving(u8 direction, u16 heldKeys)
         return;
     }
 
-    if ((heldKeys & B_BUTTON) && FlagGet(FLAG_SYS_B_DASH)
-        && !IsRunningDisallowed(gObjectEvents[gPlayerAvatar.objectEventId].currentMetatileBehavior))
     {
-        if (PlayerIsMovingOnRockStairs(direction))
-            PlayerRunSlow(direction);
+        bool8 shouldRun = FALSE;
+        if (FlagGet(FLAG_SYS_B_DASH) && !IsRunningDisallowed(gObjectEvents[gPlayerAvatar.objectEventId].currentMetatileBehavior))
+        {
+            if (!gAutoRunDisabled)
+                shouldRun = !(heldKeys & B_BUTTON);
+            else
+                shouldRun = (heldKeys & B_BUTTON);
+        }
+
+        if (shouldRun)
+        {
+            if (PlayerIsMovingOnRockStairs(direction))
+                PlayerRunSlow(direction);
+            else
+                PlayerRun(direction);
+            gPlayerAvatar.flags |= PLAYER_AVATAR_FLAG_DASH;
+            return;
+        }
         else
-            PlayerRun(direction);
-        gPlayerAvatar.flags |= PLAYER_AVATAR_FLAG_DASH;
-        return;
-    }
-    else
-    {
-        if (PlayerIsMovingOnRockStairs(direction))
-            PlayerWalkSlow(direction);
-        else
-            PlayerWalkNormal(direction);
+        {
+            if (PlayerIsMovingOnRockStairs(direction))
+                PlayerWalkSlow(direction);
+            else
+                PlayerWalkNormal(direction);
+        }
     }
 }
 

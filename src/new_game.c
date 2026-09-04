@@ -125,6 +125,7 @@ void NewGameInitData(void)
     PlayTimeCounter_Reset();
     ClearPokedexFlags();
     InitEventData();
+    FlagSet(FLAG_SYS_B_DASH); // Start game with Running Shoes
     ResetFameChecker();
     SetMoney(&gSaveBlock1Ptr->money, 3000);
     ResetGameStats();

@@ -3,6 +3,7 @@
 
 #include "global.h"
 
+extern bool8 gAutoRunDisabled;
 void ClearPlayerAvatarInfo(void);
 void SetPlayerAvatarExtraStateTransition(u8, u8);
 u8 GetPlayerAvatarGenderByGraphicsId(u8);
