@@ -923,7 +923,7 @@ enum
     SKILLS_MODE_EVS,
 };
 
-static u8 sSkillsStatDisplayMode = SKILLS_MODE_STATS;
+static EWRAM_DATA u8 sSkillsStatDisplayMode = 0;
 
 static const u8 sStatTextColors[][3] =
 {
