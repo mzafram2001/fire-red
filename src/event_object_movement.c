@@ -2671,6 +2671,11 @@ void InitObjectEventPalettes(u8 palSlot)
     }
 }
 
+void ReloadObjectEventPalettes(void)
+{
+    PatchObjectPaletteRange(gObjectPaletteTagSets[sCurrentReflectionType], 0, 10);
+}
+
 u16 GetObjectPaletteTag(u8 palSlot)
 {
     u8 i;
