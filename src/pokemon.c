@@ -5022,6 +5022,13 @@ static u8 GetNatureFromPersonality(u32 personality)
     return personality % NUM_NATURES;
 }
 
+s8 GetNatureStatMod(u8 nature, u8 statId)
+{
+    if (statId < STAT_ATK || statId > STAT_SPDEF)
+        return 0;
+    return sNatureStatTable[nature][statId - 1];
+}
+
 u16 GetEvolutionTargetSpecies(struct Pokemon *mon, u8 type, u16 evolutionItem)
 {
     int i;
