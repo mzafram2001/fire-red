@@ -41,6 +41,9 @@ u8 RunHelpSystemCallback(void)
 {
     s32 i;
 
+    // Disable the L/R Help Menu system
+    return 0;
+
     switch (sVideoState.state)
     {
     case 0:
