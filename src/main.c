@@ -1,3 +1,4 @@
+#include "rtc.h"
 #include "global.h"
 #include "gflib.h"
 #include "link.h"
@@ -147,6 +148,7 @@ void AgbMain()
     EnableVCountIntrAtLine150();
     InitRFU();
     CheckForFlashMemory();
+    RtcInit();
     InitMainCallbacks();
     InitMapMusic();
     ClearDma3Requests();

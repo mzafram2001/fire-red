@@ -1,3 +1,4 @@
+#include "day_night.h"
 #include "global.h"
 #include "gflib.h"
 #include "overworld.h"
@@ -843,7 +844,8 @@ static void ApplyGlobalTintToPaletteEntries(u16 offset, u16 size)
     switch (gGlobalFieldTintMode)
     {
     case QL_TINT_NONE:
-        return;
+        ApplyDayNightTint(&gPlttBufferUnfaded[offset], size);
+        break;
     case QL_TINT_GRAYSCALE:
         TintPalette_GrayScale(&gPlttBufferUnfaded[offset], size);
         break;
@@ -865,7 +867,8 @@ void ApplyGlobalTintToPaletteSlot(u8 slot, u8 count)
     switch (gGlobalFieldTintMode)
     {
     case QL_TINT_NONE:
-        return;
+        ApplyDayNightTint(&gPlttBufferUnfaded[BG_PLTT_ID(slot)], count * 16);
+        break;
     case QL_TINT_GRAYSCALE:
         TintPalette_GrayScale(&gPlttBufferUnfaded[BG_PLTT_ID(slot)], count * 16);
         break;

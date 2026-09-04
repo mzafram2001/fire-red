@@ -1,3 +1,4 @@
+#include "day_night.h"
 #include "global.h"
 #include "gflib.h"
 #include "bg_regs.h"
@@ -1459,6 +1460,7 @@ void CB1_Overworld(void)
 
 static void OverworldBasic(void)
 {
+    CheckDayNightChange();
     ScriptContext_RunScript();
     RunTasks();
     AnimateSprites();

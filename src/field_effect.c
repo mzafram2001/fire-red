@@ -1,3 +1,4 @@
+#include "day_night.h"
 #include "global.h"
 #include "gflib.h"
 #include "decompress.h"
@@ -440,7 +441,8 @@ void ApplyGlobalFieldPaletteTint(u8 paletteIdx)
     switch (gGlobalFieldTintMode)
     {
     case 0:
-        return;
+        ApplyDayNightTint(&gPlttBufferUnfaded[OBJ_PLTT_ID2(paletteIdx)], 16);
+        break;
     case 1:
         TintPalette_GrayScale(&gPlttBufferUnfaded[OBJ_PLTT_ID2(paletteIdx)], 16);
         break;
