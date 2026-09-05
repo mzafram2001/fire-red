@@ -108,38 +108,38 @@ static void ApplyTrainerCompetitiveStatsAndItems(struct Pokemon *mon, u16 traine
         case TRAINER_RIVAL_ROUTE22_EARLY_SQUIRTLE:
         case TRAINER_RIVAL_ROUTE22_EARLY_BULBASAUR:
         case TRAINER_RIVAL_ROUTE22_EARLY_CHARMANDER:
-            targetIV = 16;
-            totalEVs = 30;
+            targetIV = 12;
+            totalEVs = 20;
             break;
         case TRAINER_RIVAL_CERULEAN_SQUIRTLE:
         case TRAINER_RIVAL_CERULEAN_BULBASAUR:
         case TRAINER_RIVAL_CERULEAN_CHARMANDER:
-            targetIV = 18;
-            totalEVs = 60;
+            targetIV = 15;
+            totalEVs = 40;
             break;
         case TRAINER_RIVAL_SS_ANNE_SQUIRTLE:
         case TRAINER_RIVAL_SS_ANNE_BULBASAUR:
         case TRAINER_RIVAL_SS_ANNE_CHARMANDER:
-            targetIV = 20;
-            totalEVs = 90;
+            targetIV = 18;
+            totalEVs = 70;
             break;
         case TRAINER_RIVAL_POKEMON_TOWER_SQUIRTLE:
         case TRAINER_RIVAL_POKEMON_TOWER_BULBASAUR:
         case TRAINER_RIVAL_POKEMON_TOWER_CHARMANDER:
-            targetIV = 23;
-            totalEVs = 140;
+            targetIV = 21;
+            totalEVs = 110;
             break;
         case TRAINER_RIVAL_SILPH_SQUIRTLE:
         case TRAINER_RIVAL_SILPH_BULBASAUR:
         case TRAINER_RIVAL_SILPH_CHARMANDER:
-            targetIV = 27;
-            totalEVs = 220;
+            targetIV = 25;
+            totalEVs = 170;
             break;
         case TRAINER_RIVAL_ROUTE22_LATE_SQUIRTLE:
         case TRAINER_RIVAL_ROUTE22_LATE_BULBASAUR:
         case TRAINER_RIVAL_ROUTE22_LATE_CHARMANDER:
-            targetIV = 31;
-            totalEVs = 350;
+            targetIV = 29;
+            totalEVs = 260;
             break;
         default:
             targetIV = 25;
@@ -184,6 +184,10 @@ static void ApplyTrainerCompetitiveStatsAndItems(struct Pokemon *mon, u16 traine
             targetIV = 30;
             totalEVs = 300;
             break;
+        case TRAINER_BOSS_GIOVANNI:
+            targetIV = 22;
+            totalEVs = 130;
+            break;
         default:
             targetIV = 24;
             totalEVs = 150;
@@ -202,6 +206,15 @@ static void ApplyTrainerCompetitiveStatsAndItems(struct Pokemon *mon, u16 traine
         targetIV = (monLvl * 25) / 100 + 6;
         if (targetIV > 25)
             targetIV = 25;
+    }
+
+    // Ace bonus: the trainer's insignia/ace Pokemon receives enhanced IVs and EVs
+    if (partyIndex == gTrainers[trainerNum].partySize - 1 && (trainerClass == TRAINER_CLASS_LEADER || trainerClass == TRAINER_CLASS_BOSS || trainerClass == TRAINER_CLASS_RIVAL_EARLY || trainerClass == TRAINER_CLASS_RIVAL_LATE))
+    {
+        if (targetIV < 31)
+            targetIV = (targetIV + 2 <= 31) ? targetIV + 2 : 31;
+        if (totalEVs > 0 && totalEVs < 508)
+            totalEVs = (totalEVs + 40 <= 508) ? totalEVs + 40 : 508;
     }
 
     // Apply target IVs if higher than current

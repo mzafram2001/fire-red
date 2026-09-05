@@ -1,4 +1,5 @@
 #include "global.h"
+#include "constants/rgb.h"
 #include "gflib.h"
 #include "pokemon.h"
 #include "pokemon_summary_screen.h"
@@ -927,8 +928,8 @@ static EWRAM_DATA u8 sSkillsStatDisplayMode = 0;
 
 static const u8 sStatTextColors[][3] =
 {
-    {0, 14, 9}, // Neutral (default dark grey)
-    {0, 1, 2},   // Boosted (+10%, red)
+    {0, 14, 9},  // Neutral (default dark grey)
+    {0, 11, 12}, // Boosted (+10%, red)
     {0, 7, 6},   // Hindered (-10%, blue)
 };
 
@@ -2083,6 +2084,13 @@ static u8 PokeSum_HandleLoadBgGfx(void)
     case 1:
         ListMenuLoadStdPalAt(BG_PLTT_ID(6), 1);
         LoadPalette(sTextHeaderPalette, BG_PLTT_ID(7), PLTT_SIZE_4BPP);
+        {
+            static const u16 sStatRedPalette[2] = {
+                RGB(28, 1, 1),   // Boosted stat foreground (red, 0x043C)
+                RGB(31, 13, 14), // Boosted stat shadow (soft red, 0x3AFF)
+            };
+            LoadPalette(sStatRedPalette, BG_PLTT_ID(6) + 11, sizeof(sStatRedPalette));
+        }
         break;
     case 2:
         ResetTempTileDataBuffers();
