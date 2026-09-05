@@ -95,7 +95,45 @@ static const struct CompressedSpriteSheet sSpriteSheets_HealthBar[MAX_BATTLERS_C
     },
 };
 
-static const struct SpritePalette sSpritePalettes_HealthBoxHealthBar[3] =
+const u16 gHealthboxTypeIcons_Pal1[16] = {
+    0x0000, // 0: Transparent
+    0x3EB5, // 1: NORMAL    #ACAC7B
+    0x00DD, // 2: FIGHTING  #EE3100
+    0x6E8F, // 3: FLYING    #7da6de
+    0x59B6, // 4: POISON    #b468b7
+    0x2A79, // 5: GROUND    #cc9f4f
+    0x1E97, // 6: ROCK      #BDA439
+    0x26F2, // 7: BUG       #94bc4a
+    0x5114, // 8: GHOST     #A441A4
+    0x5691, // 9: STEEL     #89a1b0
+    0x45EA, // 10: MYSTERY  #527B8B
+    0x0000,
+    0x0000,
+    0x0000,
+    0x2108, // 14: Border (#404040)
+    0x7FFF, // 15: Highlight (#FFFFFF)
+};
+
+const u16 gHealthboxTypeIcons_Pal2[16] = {
+    0x0000, // 0: Transparent
+    0x1A1E, // 1: FIRE      #F68331
+    0x7A4D, // 2: WATER     #6A94F6
+    0x2B2F, // 3: GRASS     #7BCD52
+    0x0ADF, // 4: ELECTRIC  #FFB410
+    0x457F, // 5: PSYCHIC   #FF5A8B
+    0x6F73, // 6: ICE       #9CDEDE
+    0x55ED, // 7: DRAGON    #6a7baf
+    0x45EA, // 8: DARK      #527B8B
+    0x5E5E, // 9: FAIRY     #F890C0
+    0x0000,
+    0x0000,
+    0x0000,
+    0x0000,
+    0x2108, // 14: Border (#404040)
+    0x7FFF, // 15: Highlight (#FFFFFF)
+};
+
+static const struct SpritePalette sSpritePalettes_HealthBoxHealthBar[4] =
 {
     {
         .data = gBattleInterface_Healthbox_Pal,
@@ -106,8 +144,12 @@ static const struct SpritePalette sSpritePalettes_HealthBoxHealthBar[3] =
         .tag = TAG_HEALTHBAR_PAL,
     },
     {
-        .data = gMenuInfoElements2_Pal,
-        .tag = TAG_HEALTHBOX_TYPE_ICONS_PAL,
+        .data = gHealthboxTypeIcons_Pal1,
+        .tag = TAG_HEALTHBOX_TYPE_ICONS_PAL_1,
+    },
+    {
+        .data = gHealthboxTypeIcons_Pal2,
+        .tag = TAG_HEALTHBOX_TYPE_ICONS_PAL_2,
     },
 };
 
@@ -495,6 +537,7 @@ static void BattleLoadAllHealthBoxesGfxAtOnce(void)
     LoadSpritePalette(&sSpritePalettes_HealthBoxHealthBar[0]);
     LoadSpritePalette(&sSpritePalettes_HealthBoxHealthBar[1]);
     LoadSpritePalette(&sSpritePalettes_HealthBoxHealthBar[2]);
+    LoadSpritePalette(&sSpritePalettes_HealthBoxHealthBar[3]);
     if (!IsDoubleBattle())
     {
         LoadCompressedSpriteSheetUsingHeap(&sSpriteSheet_SinglesPlayerHealthbox);

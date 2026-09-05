@@ -59,7 +59,11 @@ enum
 #define TAG_HEALTHBOX_TYPE_ICON_P2_T2_TILE      55067
 #define TAG_HEALTHBOX_TYPE_ICON_O2_T1_TILE      55068
 #define TAG_HEALTHBOX_TYPE_ICON_O2_T2_TILE      55069
-#define TAG_HEALTHBOX_TYPE_ICONS_PAL             55070
+#define TAG_HEALTHBOX_TYPE_ICONS_PAL_1          55070
+#define TAG_HEALTHBOX_TYPE_ICONS_PAL_2          55071
+
+extern const u16 gHealthboxTypeIcons_Pal1[16];
+extern const u16 gHealthboxTypeIcons_Pal2[16];
 
 enum
 {
