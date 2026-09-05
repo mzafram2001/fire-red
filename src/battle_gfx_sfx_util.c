@@ -102,7 +102,7 @@ const u16 gHealthboxTypeIcons_Pal1[16] = {
     0x6E8F, // 3: FLYING    #7da6de
     0x59B6, // 4: POISON    #b468b7
     0x2A79, // 5: GROUND    #cc9f4f
-    0x1E97, // 6: ROCK      #BDA439
+    0x3276, // 6: ROCK      #b2a061
     0x26F2, // 7: BUG       #94bc4a
     0x5114, // 8: GHOST     #A441A4
     0x5691, // 9: STEEL     #89a1b0
@@ -119,7 +119,7 @@ const u16 gHealthboxTypeIcons_Pal2[16] = {
     0x1A1E, // 1: FIRE      #F68331
     0x7A4D, // 2: WATER     #6A94F6
     0x2B2F, // 3: GRASS     #7BCD52
-    0x0ADF, // 4: ELECTRIC  #FFB410
+    0x1B1C, // 4: ELECTRIC  #e5c531
     0x457F, // 5: PSYCHIC   #FF5A8B
     0x6F73, // 6: ICE       #9CDEDE
     0x55ED, // 7: DRAGON    #6a7baf
