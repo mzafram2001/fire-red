@@ -700,23 +700,23 @@ static void SpriteCB_HealthBoxTypeIcon(struct Sprite *sprite)
 
     if (GetBattlerSide(sprite->sTypeIconBattlerId) != B_SIDE_PLAYER)
     {
-        // Opponent: right side of healthbox, in a column
-        xOffset = 104;
+        // Opponent: right side of healthbox card in a column
+        xOffset = 68;
 
         if (sprite->sTypeIconIsDual)
-            yOffset = (sprite->sTypeIconSlot == 0) ? 6 : 16;
+            yOffset = (sprite->sTypeIconSlot == 0) ? 4 : 14;
         else
-            yOffset = 11;
+            yOffset = 8;
     }
     else
     {
-        // Player: left side of healthbox, in a column
-        xOffset = -10;
+        // Player: left side of healthbox card in a column
+        xOffset = -44;
 
         if (sprite->sTypeIconIsDual)
-            yOffset = (sprite->sTypeIconSlot == 0) ? 9 : 19;
+            yOffset = (sprite->sTypeIconSlot == 0) ? 4 : 14;
         else
-            yOffset = 14;
+            yOffset = 8;
     }
 
     sprite->x = gSprites[healthboxSpriteId].x + xOffset;
