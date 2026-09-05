@@ -538,8 +538,8 @@ static void Debug_DrawNumberPair(s16 num1, s16 num2, u16 *dest)
 #define sTypeIconIsDual            data[3]
 
 static const struct OamData sOamData_HealthboxTypeIcon = {
-    .shape = SPRITE_SHAPE(32x16),
-    .size = SPRITE_SIZE(32x16),
+    .shape = SPRITE_SHAPE(8x8),
+    .size = SPRITE_SIZE(8x8),
     .priority = 1
 };
 
@@ -623,66 +623,100 @@ static const struct SpriteTemplate sHealthboxTypeIconSpriteTemplates[MAX_BATTLER
     },
 };
 
-static const u8 sTypeToMenuInfoTileOffset[NUMBER_OF_MON_TYPES] = {
-    [TYPE_NORMAL]   = 0x20,
-    [TYPE_FIGHTING] = 0x64,
-    [TYPE_FLYING]   = 0x60,
-    [TYPE_POISON]   = 0x80,
-    [TYPE_GROUND]   = 0x48,
-    [TYPE_ROCK]     = 0x44,
-    [TYPE_BUG]      = 0x6C,
-    [TYPE_GHOST]    = 0x68,
-    [TYPE_STEEL]    = 0x88,
-    [TYPE_MYSTERY]  = 0xA4,
-    [TYPE_FIRE]     = 0x24,
-    [TYPE_WATER]    = 0x28,
-    [TYPE_GRASS]    = 0x2C,
-    [TYPE_ELECTRIC] = 0x40,
-    [TYPE_PSYCHIC]  = 0x84,
-    [TYPE_ICE]      = 0x4C,
-    [TYPE_DRAGON]   = 0xA0,
-    [TYPE_DARK]     = 0x8C,
-    [TYPE_FAIRY]    = 0x04,
+static const u8 sTypeToColorIndex[NUMBER_OF_MON_TYPES] = {
+    [TYPE_NORMAL]   = 9,   // #A8A878 (tan/beige)
+    [TYPE_FIGHTING] = 1,   // #E83000 (red)
+    [TYPE_FLYING]   = 7,   // #6890F0 (blue)
+    [TYPE_POISON]   = 8,   // #A040A0 (purple)
+    [TYPE_GROUND]   = 2,   // #F08030 (orange-brown)
+    [TYPE_ROCK]     = 11,  // #B8A038 (rock tan)
+    [TYPE_BUG]      = 4,   // #D8E030 (lime)
+    [TYPE_GHOST]    = 8,   // #A040A0 (purple)
+    [TYPE_STEEL]    = 13,  // #507888 (steel slate)
+    [TYPE_MYSTERY]  = 14,  // #404040 (charcoal)
+    [TYPE_FIRE]     = 1,   // #E83000 (red)
+    [TYPE_WATER]    = 7,   // #6890F0 (water blue)
+    [TYPE_GRASS]    = 5,   // #78C850 (green)
+    [TYPE_ELECTRIC] = 3,   // #F8B010 (yellow)
+    [TYPE_PSYCHIC]  = 12,  // #F85888 (magenta-pink)
+    [TYPE_ICE]      = 6,   // #98D8D8 (cyan)
+    [TYPE_DRAGON]   = 1,   // #E83000 (dragon red/indigo)
+    [TYPE_DARK]     = 14,  // #404040 (dark)
+    [TYPE_FAIRY]    = 10,  // #F890C0 (pastel pink)
 };
 
-static void CopyTypeIconTilesToVram(u32 destTileNum, u8 type)
+static void GenerateTypeIconTile(u32 destTileNum, u8 type)
 {
-    u32 offset;
-    u8 *dest;
-    const u8 *src;
+    u8 color;
+    u8 tile[32];
+    int y;
 
     if (type >= NUMBER_OF_MON_TYPES)
         type = TYPE_MYSTERY;
 
-    offset = sTypeToMenuInfoTileOffset[type];
-    dest = (u8 *)(OBJ_VRAM0 + destTileNum * TILE_SIZE_4BPP);
-    src = gMenuInfoElements_Gfx + offset * TILE_SIZE_4BPP;
+    color = sTypeToColorIndex[type];
 
-    // Top 4 tiles (32x8)
-    CpuCopy32(src, dest, 4 * TILE_SIZE_4BPP);
-    // Bottom 4 tiles (32x8, row is 16 tiles down in 128px menu_info)
-    CpuCopy32(src + 16 * TILE_SIZE_4BPP, dest + 4 * TILE_SIZE_4BPP, 4 * TILE_SIZE_4BPP);
+    // Row 0: . X X X X X X .
+    tile[0] = 0x00 | (14 << 4);
+    tile[1] = 14 | (14 << 4);
+    tile[2] = 14 | (14 << 4);
+    tile[3] = 14 | (0 << 4);
+
+    // Row 1: X H H C C C X X (14, 15, 15, C, C, C, 14, 14)
+    tile[4] = 14 | (15 << 4);
+    tile[5] = 15 | (color << 4);
+    tile[6] = color | (color << 4);
+    tile[7] = 14 | (14 << 4);
+
+    // Row 2: X H C C C C C X (14, 15, C, C, C, C, C, 14)
+    tile[8] = 14 | (15 << 4);
+    tile[9] = color | (color << 4);
+    tile[10] = color | (color << 4);
+    tile[11] = color | (14 << 4);
+
+    // Rows 3..6: X C C C C C C X (14, C, C, C, C, C, C, 14)
+    for (y = 3; y <= 6; y++)
+    {
+        tile[y * 4 + 0] = 14 | (color << 4);
+        tile[y * 4 + 1] = color | (color << 4);
+        tile[y * 4 + 2] = color | (color << 4);
+        tile[y * 4 + 3] = color | (14 << 4);
+    }
+
+    // Row 7: . X X X X X X .
+    tile[28] = 0x00 | (14 << 4);
+    tile[29] = 14 | (14 << 4);
+    tile[30] = 14 | (14 << 4);
+    tile[31] = 14 | (0 << 4);
+
+    CpuCopy32(tile, (void *)(OBJ_VRAM0 + destTileNum * TILE_SIZE_4BPP), 32);
 }
 
 static void SpriteCB_HealthBoxTypeIcon(struct Sprite *sprite)
 {
     u8 healthboxSpriteId = sprite->sTypeIconHealthboxSpriteId;
     s16 xOffset = 0;
-    s16 yOffset = -12;
+    s16 yOffset = 0;
 
     if (GetBattlerSide(sprite->sTypeIconBattlerId) != B_SIDE_PLAYER)
     {
+        // Opponent: right side of healthbox, in a column
+        xOffset = 104;
+
         if (sprite->sTypeIconIsDual)
-            xOffset = (sprite->sTypeIconSlot == 0) ? 4 : 38;
+            yOffset = (sprite->sTypeIconSlot == 0) ? 6 : 16;
         else
-            xOffset = 4;
+            yOffset = 11;
     }
     else
     {
+        // Player: left side of healthbox, in a column
+        xOffset = -10;
+
         if (sprite->sTypeIconIsDual)
-            xOffset = (sprite->sTypeIconSlot == 0) ? 8 : 42;
+            yOffset = (sprite->sTypeIconSlot == 0) ? 9 : 19;
         else
-            xOffset = 20;
+            yOffset = 14;
     }
 
     sprite->x = gSprites[healthboxSpriteId].x + xOffset;
@@ -2108,9 +2142,9 @@ static void UpdateHealthboxTypeIcons(u8 healthboxSpriteId, struct Pokemon *mon)
     gSprites[sprite1Id].sTypeIconIsDual = isDual;
     gSprites[sprite2Id].sTypeIconIsDual = isDual;
 
-    CopyTypeIconTilesToVram(gSprites[sprite1Id].oam.tileNum, type1);
+    GenerateTypeIconTile(gSprites[sprite1Id].oam.tileNum, type1);
     if (isDual)
-        CopyTypeIconTilesToVram(gSprites[sprite2Id].oam.tileNum, type2);
+        GenerateTypeIconTile(gSprites[sprite2Id].oam.tileNum, type2);
 
     if (!gSprites[healthboxSpriteId].invisible)
     {
