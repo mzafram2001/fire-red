@@ -43,6 +43,7 @@ void SetUpBattleVars(void)
     s32 i;
 
     gBattleMainFunc = BeginBattleIntroDummy;
+    memset(gBattleMons, 0, sizeof(gBattleMons));
 
     for (i = 0; i < MAX_BATTLERS_COUNT; i++)
     {

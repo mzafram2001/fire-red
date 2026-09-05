@@ -924,10 +924,7 @@ void SetHealthboxSpriteVisible(u8 healthboxSpriteId)
         if (sHealthboxTypeIconSpriteIds[battlerId][0] != SPRITE_NONE)
             gSprites[sHealthboxTypeIconSpriteIds[battlerId][0]].invisible = FALSE;
         if (sHealthboxTypeIconSpriteIds[battlerId][1] != SPRITE_NONE)
-        {
-            if (gSprites[sHealthboxTypeIconSpriteIds[battlerId][1]].sTypeIconIsDual)
-                gSprites[sHealthboxTypeIconSpriteIds[battlerId][1]].invisible = FALSE;
-        }
+            gSprites[sHealthboxTypeIconSpriteIds[battlerId][1]].invisible = !gSprites[sHealthboxTypeIconSpriteIds[battlerId][1]].sTypeIconIsDual;
     }
 }
 
@@ -2112,6 +2109,7 @@ static void UpdateHealthboxTypeIcons(u8 healthboxSpriteId, struct Pokemon *mon)
     u8 type1, type2;
     u8 sprite1Id, sprite2Id;
     bool8 isDual;
+    u16 species;
 
     if (battlerId >= MAX_BATTLERS_COUNT)
         return;
@@ -2125,16 +2123,21 @@ static void UpdateHealthboxTypeIcons(u8 healthboxSpriteId, struct Pokemon *mon)
     if (sprite1Id == SPRITE_NONE || sprite2Id == SPRITE_NONE)
         return;
 
-    if (gBattleMons[battlerId].species != SPECIES_NONE && gBattleMons[battlerId].type1 != TYPE_NONE)
+    species = GetMonData(mon, MON_DATA_SPECIES);
+    if (species == SPECIES_NONE || species >= NUM_SPECIES)
+        return;
+
+    // Default to base species types from the current mon
+    type1 = gSpeciesInfo[species].types[0];
+    type2 = gSpeciesInfo[species].types[1];
+
+    // If battler is actively on the field and corresponds to this mon, check dynamic battle types
+    // (e.g. Color Change, Conversion, Camouflage, Transform)
+    if ((gBattleMons[battlerId].status2 & STATUS2_TRANSFORMED)
+     || (gBattleMons[battlerId].species == species && gBattleMons[battlerId].hp != 0))
     {
         type1 = gBattleMons[battlerId].type1;
         type2 = gBattleMons[battlerId].type2;
-    }
-    else
-    {
-        u16 species = GetMonData(mon, MON_DATA_SPECIES);
-        type1 = gSpeciesInfo[species].types[0];
-        type2 = gSpeciesInfo[species].types[1];
     }
 
     isDual = (type1 != type2);
@@ -2146,11 +2149,8 @@ static void UpdateHealthboxTypeIcons(u8 healthboxSpriteId, struct Pokemon *mon)
     if (isDual)
         GenerateTypeIconTile(gSprites[sprite2Id].oam.tileNum, type2);
 
-    if (!gSprites[healthboxSpriteId].invisible)
-    {
-        gSprites[sprite1Id].invisible = FALSE;
-        gSprites[sprite2Id].invisible = !isDual;
-    }
+    gSprites[sprite1Id].invisible = gSprites[healthboxSpriteId].invisible;
+    gSprites[sprite2Id].invisible = isDual ? gSprites[healthboxSpriteId].invisible : TRUE;
 }
 
 void ClearHealthboxTypeIcons(void)
