@@ -2,7 +2,7 @@
 
 > **Author:** [Miguel Zafra (@mzafram2001)](https://github.com/mzafram2001)
 
-An enhanced and modernized decompilation of **Pokémon FireRed** based on [pret/pokefirered](https://github.com/pret/pokefirered). This project integrates essential modern Quality-of-Life (QoL) improvements, battle mechanics up to Gen 6 standards, full RTC day/night cycles, no-trade evolutions, and improved trainer AI while preserving the classic Kanto adventure.
+An enhanced and modernized decompilation of **Pokémon FireRed** based on [pret/pokefirered](https://github.com/pret/pokefirered). This project integrates essential modern Quality-of-Life (QoL) improvements, battle mechanics up to Gen 6 standards, full RTC day/night cycles, no-trade evolutions, dynamic badge-based level caps, modern shiny rates, and improved trainer AI while preserving the classic Kanto adventure.
 
 ---
 
@@ -28,6 +28,8 @@ An enhanced and modernized decompilation of **Pokémon FireRed** based on [pret/
   * Existing Pokémon retroactively updated to Fairy or dual Fairy-type (e.g., Clefairy line, Jigglypuff line, Mr. Mime, Togepi line, Marill line, Snubbull line, Ralts/Kirlia/Gardevoir, etc.).
   * Fairy-type moves included and integrated (Disarming Voice, Draining Kiss, Dazzling Gleam, etc.).
   * Custom pastel-pink Fairy badge icon seamlessly integrated into battle menus and summary screens.
+* **Modern Shiny Rate (1/4096):**
+  * Upgraded base shiny encounter probability from the classic 1/8192 to the modern Gen 6+ standard of **1/4096** (`SHINY_ODDS = 16/65536`) for wild encounters, gifts, and breeding.
 
 ---
 
@@ -74,6 +76,27 @@ An enhanced and modernized decompilation of **Pokémon FireRed** based on [pret/
 ---
 
 ### 🧠 Trainer AI & Difficulty Enhancements
+* **Dynamic Badge-Based Level Caps:**
+  * To prevent unintentional overleveling and maintain competitive boss encounters, a dynamic level cap system is enforced based on badge progress.
+  * Pokémon at or above the current cap receive **0 EXP** (cleanly bypassing repetitive level-up messages) while still earning **EVs**.
+  * Leveling up in battle will clamp exactly at the cap level, and Rare Candies / Daycare will not exceed the cap.
+  
+| Badges / Milestone | Target Boss | Level Cap |
+| :--- | :--- | :---: |
+| **0 Badges** *(Game Start)* | Gym 1: Brock *(Onix)* | **14** |
+| **1 Badge** *(Boulder Badge)* | Gym 2: Misty *(Starmie)* | **21** |
+| **2 Badges** *(Cascade Badge)* | Gym 3: Lt. Surge *(Raichu)* | **24** |
+| **3 Badges** *(Thunder Badge)* | Gym 4: Erika *(Vileplume)* | **29** |
+| **4–5 Badges** *(Rainbow / Soul / Marsh)* | Gym 5 & 6: Koga & Sabrina *(Weezing / Alakazam)* | **43** |
+| **6 Badges** *(Both Koga & Sabrina defeated)* | Gym 7: Blaine *(Arcanine)* | **47** |
+| **7 Badges** *(Volcano Badge)* | Gym 8: Giovanni *(Rhydon)* | **50** |
+| **8 Badges** *(Earth Badge)* | Elite Four 1: Lorelei | **54** |
+| **Lorelei Defeated** | Elite Four 2: Bruno | **56** |
+| **Bruno Defeated** | Elite Four 3: Agatha | **58** |
+| **Agatha Defeated** | Elite Four 4: Lance | **60** |
+| **Lance Defeated** | Champion Rival | **63** |
+| **Champion Defeated** *(Hall of Fame)* | Post-Game Freedom | **100** |
+
 * **Competitive Boss Trainers:** Gym Leaders, Elite Four, Champion, and Rival feature progressively scaled competitive IV spreads (up to 31) and optimized EV yields, accompanied by competitive held items.
 * **Upgraded Battle AI:** Important trainers utilize full-suite AI decision-making (damage calculation awareness, kill-range recognition, avoiding useless moves).
 * **Smart Switching Logic:** Skilled trainers will actively switch out when facing critical type disadvantages or perilous matchups.

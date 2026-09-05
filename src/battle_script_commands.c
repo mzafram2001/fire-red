@@ -3204,8 +3204,10 @@ static void Cmd_getexp(void)
                 gBattleScripting.getexpState = 5;
                 gBattleMoveDamage = 0; // used for exp
             }
-            else if (GetMonData(&gPlayerParty[gBattleStruct->expGetterMonId], MON_DATA_LEVEL) == MAX_LEVEL)
+            else if (GetMonData(&gPlayerParty[gBattleStruct->expGetterMonId], MON_DATA_LEVEL) >= GetCurrentLevelCap())
             {
+                if (GetMonData(&gPlayerParty[gBattleStruct->expGetterMonId], MON_DATA_HP) && !(gBattleTypeFlags & BATTLE_TYPE_POKEDUDE))
+                    MonGainEVs(&gPlayerParty[gBattleStruct->expGetterMonId], gBattleMons[gBattlerFainted].species);
                 *(&gBattleStruct->sentInPokes) >>= 1;
                 gBattleScripting.getexpState = 5;
                 gBattleMoveDamage = 0; // used for exp
@@ -3354,6 +3356,9 @@ static void Cmd_getexp(void)
         }
         break;
     case 5: // looper increment
+        if (GetMonData(&gPlayerParty[gBattleStruct->expGetterMonId], MON_DATA_LEVEL) >= GetCurrentLevelCap())
+            gBattleMoveDamage = 0;
+
         if (gBattleMoveDamage) // there is exp to give, goto case 3 that gives exp
         {
             gBattleScripting.getexpState = 3;

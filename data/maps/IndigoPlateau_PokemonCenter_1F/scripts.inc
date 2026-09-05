@@ -5,6 +5,12 @@ IndigoPlateau_PokemonCenter_1F_MapScripts::
 
 IndigoPlateau_PokemonCenter_1F_OnTransition::
 	setrespawn HEAL_LOCATION_INDIGO_PLATEAU
+	setvar VAR_MAP_SCENE_POKEMON_LEAGUE, 0
+	clearflag FLAG_DEFEATED_LORELEI
+	clearflag FLAG_DEFEATED_BRUNO
+	clearflag FLAG_DEFEATED_AGATHA
+	clearflag FLAG_DEFEATED_LANCE
+	clearflag FLAG_DEFEATED_CHAMP
 	specialvar VAR_RESULT, IsNationalPokedexEnabled
 	call_if_eq VAR_RESULT, TRUE, IndigoPlateau_PokemonCenter_1F_EventScript_CheckBlockDoor
 	end

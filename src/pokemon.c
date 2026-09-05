@@ -4164,7 +4164,7 @@ bool8 PokemonUseItemEffects(struct Pokemon *mon, u16 item, u8 partyIndex, u8 mov
 
             // Rare Candy
             if ((itemEffect[cmdIndex] & ITEM3_LEVEL_UP)
-             && GetMonData(mon, MON_DATA_LEVEL, NULL) != MAX_LEVEL)
+             && GetMonData(mon, MON_DATA_LEVEL, NULL) < GetCurrentLevelCap())
             {
                 data = gExperienceTables[gSpeciesInfo[GetMonData(mon, MON_DATA_SPECIES, NULL)].growthRate][GetMonData(mon, MON_DATA_LEVEL, NULL) + 1];
                 SetMonData(mon, MON_DATA_EXP, &data);
@@ -4654,7 +4654,7 @@ bool8 PokemonItemUseNoEffect(struct Pokemon *mon, u16 item, u8 partyIndex, u8 mo
 
             // Rare Candy
             if ((itemEffect[cmdIndex] & ITEM3_LEVEL_UP)
-             && GetMonData(mon, MON_DATA_LEVEL, NULL) != MAX_LEVEL)
+             && GetMonData(mon, MON_DATA_LEVEL, NULL) < GetCurrentLevelCap())
                 retVal = FALSE;
 
             // Cure status
@@ -6459,4 +6459,39 @@ u8 *MonSpritesGfxManager_GetSpritePtr(u8 spriteNum)
             spriteNum = 0;
         return sMonSpritesGfxManager->spritePointers[spriteNum];
     }
+}
+
+
+u8 GetCurrentLevelCap(void)
+{
+    if (FlagGet(FLAG_SYS_GAME_CLEAR))
+        return MAX_LEVEL;
+
+    if (FlagGet(FLAG_BADGE08_GET))
+    {
+        if (FlagGet(FLAG_DEFEATED_LANCE))
+            return 63; // Champion
+        if (FlagGet(FLAG_DEFEATED_AGATHA))
+            return 60; // Elite Four 4 (Lance)
+        if (FlagGet(FLAG_DEFEATED_BRUNO))
+            return 58; // Elite Four 3 (Agatha)
+        if (FlagGet(FLAG_DEFEATED_LORELEI))
+            return 56; // Elite Four 2 (Bruno)
+        return 54;     // Elite Four 1 (Lorelei)
+    }
+
+    if (FlagGet(FLAG_BADGE07_GET))
+        return 50; // Gym 8 (Giovanni)
+    if (FlagGet(FLAG_BADGE06_GET) && FlagGet(FLAG_BADGE05_GET))
+        return 47; // Gym 7 (Blaine)
+    if (FlagGet(FLAG_BADGE04_GET))
+        return 43; // Gym 5 & 6 (Koga & Sabrina)
+    if (FlagGet(FLAG_BADGE03_GET))
+        return 29; // Gym 4 (Erika)
+    if (FlagGet(FLAG_BADGE02_GET))
+        return 24; // Gym 3 (Lt. Surge)
+    if (FlagGet(FLAG_BADGE01_GET))
+        return 21; // Gym 2 (Misty)
+
+    return 14; // Gym 1 (Brock)
 }

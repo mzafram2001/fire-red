@@ -28,6 +28,7 @@
 #include "field_fadetransition.h"
 #include "trade.h"
 #include "constants/daycare.h"
+#include "pokemon.h"
 #include "constants/region_map_sections.h"
 
 // Combination of RSE's Day-Care (re-used on Four Island), FRLG's Day-Care, and egg_hatch.c
@@ -515,9 +516,13 @@ static u16 TakeSelectedPokemonFromDaycare(struct DaycareMon *daycareMon)
     species = GetBoxMonData(&daycareMon->mon, MON_DATA_SPECIES);
     BoxMonToMon(&daycareMon->mon, &pokemon);
 
-    if (GetMonData(&pokemon, MON_DATA_LEVEL) != MAX_LEVEL)
+    if (GetMonData(&pokemon, MON_DATA_LEVEL) < GetCurrentLevelCap())
     {
+        u8 cap = GetCurrentLevelCap();
+        u32 maxCapExp = gExperienceTables[gSpeciesInfo[species].growthRate][cap];
         experience = GetMonData(&pokemon, MON_DATA_EXP) + daycareMon->steps;
+        if (experience > maxCapExp)
+            experience = maxCapExp;
         SetMonData(&pokemon, MON_DATA_EXP, &experience);
         ApplyDaycareExperience(&pokemon);
     }
@@ -551,8 +556,14 @@ u16 TakePokemonFromDaycare(void)
 static u8 GetLevelAfterDaycareSteps(struct BoxPokemon *mon, u32 steps)
 {
     struct BoxPokemon tempMon = *mon;
-
+    u16 species = GetBoxMonData(mon, MON_DATA_SPECIES);
+    u8 cap = GetCurrentLevelCap();
+    u32 maxCapExp = gExperienceTables[gSpeciesInfo[species].growthRate][cap];
     u32 experience = GetBoxMonData(mon, MON_DATA_EXP) + steps;
+
+    if (experience > maxCapExp)
+        experience = maxCapExp;
+
     SetBoxMonData(&tempMon, MON_DATA_EXP,  &experience);
     return GetLevelFromBoxMonExp(&tempMon);
 }

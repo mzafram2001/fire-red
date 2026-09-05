@@ -6,6 +6,7 @@
 #include "link.h"
 #include "m4a.h"
 #include "party_menu.h"
+#include "pokemon.h"
 #include "pokeball.h"
 #include "strings.h"
 #include "pokemon_special_anim.h"
@@ -1045,7 +1046,10 @@ static void Task_GiveExpToMon(u8 taskId)
 
             SetMonData(mon, MON_DATA_EXP, &nextLvlExp);
             CalculateMonStats(mon);
-            gainedExp -= nextLvlExp - currExp;
+            if (level + 1 >= GetCurrentLevelCap())
+                gainedExp = 0;
+            else
+                gainedExp -= nextLvlExp - currExp;
             savedActiveBattler = gActiveBattler;
             gActiveBattler = battlerId;
             BtlController_EmitTwoReturnValues(1, RET_VALUE_LEVELED_UP, gainedExp);
@@ -1122,7 +1126,10 @@ static void Task_GiveExpWithExpBar(u8 taskId)
 
                 SetMonData(&gPlayerParty[monId], MON_DATA_EXP, &expOnNextLvl);
                 CalculateMonStats(&gPlayerParty[monId]);
-                gainedExp -= expOnNextLvl - currExp;
+                if (level + 1 >= GetCurrentLevelCap())
+                    gainedExp = 0;
+                else
+                    gainedExp -= expOnNextLvl - currExp;
                 savedActiveBattler = gActiveBattler;
                 gActiveBattler = battlerId;
                 BtlController_EmitTwoReturnValues(1, RET_VALUE_LEVELED_UP, gainedExp);

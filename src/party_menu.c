@@ -5019,7 +5019,7 @@ void ItemUseCB_RareCandy(u8 taskId, TaskFunc func)
     u16 item = gSpecialVar_ItemId;
     bool8 noEffect;
 
-    if (GetMonData(mon, MON_DATA_LEVEL) != MAX_LEVEL)
+    if (GetMonData(mon, MON_DATA_LEVEL) < GetCurrentLevelCap())
         noEffect = PokemonItemUseNoEffect(mon, item, gPartyMenu.slotId, 0);
     else
         noEffect = TRUE;
