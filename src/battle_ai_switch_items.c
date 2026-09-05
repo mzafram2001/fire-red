@@ -9,10 +9,13 @@
 #include "constants/items.h"
 #include "constants/moves.h"
 #include "constants/pokemon.h"
+#include "constants/battle_ai.h"
 
 static bool8 HasSuperEffectiveMoveAgainstOpponents(bool8 noRng);
 static bool8 FindMonWithFlagsAndSuperEffective(u8 flags, u8 moduloPercent);
 static bool8 ShouldUseItem(void);
+static void ModulateByTypeEffectiveness(u8 atkType, u8 defType1, u8 defType2, u8 *var);
+static bool8 ShouldSwitchIfBadMatchup(void);
 
 static bool8 ShouldSwitchIfPerishSong(void)
 {
@@ -299,6 +302,69 @@ static bool8 FindMonWithFlagsAndSuperEffective(u8 flags, u8 moduloPercent)
     return FALSE;
 }
 
+static bool8 ShouldSwitchIfBadMatchup(void)
+{
+    u8 opposingBattler;
+    u8 aiMonType1, aiMonType2;
+    u8 oppType1, oppType2;
+    u8 incomingThreat = 10;
+    u8 bestMonId;
+    u16 aiFlags;
+
+    if (!(gBattleTypeFlags & BATTLE_TYPE_TRAINER))
+        return FALSE;
+
+    if (gTrainerBattleOpponent_A >= MAX_TRAINERS_COUNT)
+        return FALSE;
+
+    aiFlags = gTrainers[gTrainerBattleOpponent_A].aiFlags;
+    if (!(aiFlags & (AI_SCRIPT_CHECK_VIABILITY | AI_SCRIPT_TRY_TO_FAINT)))
+        return FALSE;
+
+    if (gDisableStructs[gActiveBattler].isFirstTurn)
+        return FALSE;
+
+    if (AreStatsRaised())
+        return FALSE;
+
+    if (HasSuperEffectiveMoveAgainstOpponents(FALSE))
+        return FALSE;
+
+    if (gBattleTypeFlags & BATTLE_TYPE_DOUBLE)
+        return FALSE;
+
+    opposingBattler = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
+    if (gAbsentBattlerFlags & gBitTable[opposingBattler])
+        return FALSE;
+
+    if (gBattleMons[opposingBattler].hp == 0)
+        return FALSE;
+
+    aiMonType1 = gBattleMons[gActiveBattler].type1;
+    aiMonType2 = gBattleMons[gActiveBattler].type2;
+    oppType1 = gBattleMons[opposingBattler].type1;
+    oppType2 = gBattleMons[opposingBattler].type2;
+
+    ModulateByTypeEffectiveness(oppType1, aiMonType1, aiMonType2, &incomingThreat);
+    ModulateByTypeEffectiveness(oppType2, aiMonType1, aiMonType2, &incomingThreat);
+
+    if (incomingThreat >= 20 || (gBattleMons[gActiveBattler].hp < (gBattleMons[gActiveBattler].maxHP * 2 / 5) && gBattleMons[gActiveBattler].speed < gBattleMons[opposingBattler].speed))
+    {
+        *(gBattleStruct->monToSwitchIntoId + gActiveBattler) = PARTY_SIZE;
+        *(gBattleStruct->AI_monToSwitchIntoId + (GetBattlerPosition(gActiveBattler) >> 1)) = PARTY_SIZE;
+        bestMonId = GetMostSuitableMonToSwitchInto();
+        if (bestMonId != PARTY_SIZE && bestMonId < PARTY_SIZE)
+        {
+            *(gBattleStruct->AI_monToSwitchIntoId + (GetBattlerPosition(gActiveBattler) >> 1)) = bestMonId;
+            *(gBattleStruct->monToSwitchIntoId + gActiveBattler) = bestMonId;
+            BtlController_EmitTwoReturnValues(1, B_ACTION_SWITCH, 0);
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
 static bool8 ShouldSwitch(void)
 {
     u8 battlerIn1, battlerIn2;
@@ -344,7 +410,8 @@ static bool8 ShouldSwitch(void)
     if (ShouldSwitchIfPerishSong()
      || ShouldSwitchIfWonderGuard()
      || FindMonThatAbsorbsOpponentsMove()
-     || ShouldSwitchIfNaturalCure())
+     || ShouldSwitchIfNaturalCure()
+     || ShouldSwitchIfBadMatchup())
         return TRUE;
     if (HasSuperEffectiveMoveAgainstOpponents(FALSE)
      || AreStatsRaised())
@@ -474,12 +541,17 @@ u8 GetMostSuitableMonToSwitchInto(void)
             {
                 u8 type1 = gSpeciesInfo[species].types[0];
                 u8 type2 = gSpeciesInfo[species].types[1];
-                u8 typeDmg = 10;
-                ModulateByTypeEffectiveness(gBattleMons[opposingBattler].type1, type1, type2, &typeDmg);
-                ModulateByTypeEffectiveness(gBattleMons[opposingBattler].type2, type1, type2, &typeDmg);
-                if (bestDmg < typeDmg)
+                u8 defDmg = 10;
+                u8 offDmg = 10;
+                ModulateByTypeEffectiveness(gBattleMons[opposingBattler].type1, type1, type2, &defDmg);
+                ModulateByTypeEffectiveness(gBattleMons[opposingBattler].type2, type1, type2, &defDmg);
+                ModulateByTypeEffectiveness(type1, gBattleMons[opposingBattler].type1, gBattleMons[opposingBattler].type2, &offDmg);
+                if (type1 != type2)
+                    ModulateByTypeEffectiveness(type2, gBattleMons[opposingBattler].type1, gBattleMons[opposingBattler].type2, &offDmg);
+
+                if (defDmg <= 10 && (offDmg > bestDmg || bestMonId == 6))
                 {
-                    bestDmg = typeDmg;
+                    bestDmg = offDmg;
                     bestMonId = i;
                 }
             }

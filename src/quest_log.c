@@ -8,6 +8,7 @@
 #include "script.h"
 #include "overworld.h"
 #include "field_fadetransition.h"
+#include "fieldmap.h"
 #include "field_weather.h"
 #include "event_object_movement.h"
 #include "event_object_lock.h"
@@ -1228,6 +1229,11 @@ static void Task_EndQuestLog(u8 taskId)
         UnlockPlayerFieldControls();
         gTextFlags.autoScroll = FALSE;
         gGlobalFieldTintMode = QL_TINT_NONE;
+        if (IsMapTypeOutdoors(gMapHeader.mapType))
+        {
+            LoadMapTilesetPalettes(gMapHeader.mapLayout);
+            ReloadObjectEventPalettes();
+        }
         DisableWildEncounters(FALSE);
         gHelpSystemEnabled = TRUE;
         DestroyTask(taskId);

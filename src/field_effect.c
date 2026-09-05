@@ -450,6 +450,7 @@ void ApplyGlobalFieldPaletteTint(u8 paletteIdx)
         TintPalette_SepiaTone(&gPlttBufferUnfaded[OBJ_PLTT_ID2(paletteIdx)], 16);
         break;
     case 3:
+        ApplyDayNightTint(&gPlttBufferUnfaded[OBJ_PLTT_ID2(paletteIdx)], 16);
         QuestLog_BackUpPalette(OBJ_PLTT_ID2(paletteIdx), 16);
         TintPalette_GrayScale(&gPlttBufferUnfaded[OBJ_PLTT_ID2(paletteIdx)], 16);
         break;

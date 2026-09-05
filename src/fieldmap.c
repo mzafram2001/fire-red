@@ -853,6 +853,7 @@ static void ApplyGlobalTintToPaletteEntries(u16 offset, u16 size)
         TintPalette_SepiaTone(&gPlttBufferUnfaded[offset], size);
         break;
     case QL_TINT_BACKUP_GRAYSCALE:
+        ApplyDayNightTint(&gPlttBufferUnfaded[offset], size);
         QuestLog_BackUpPalette(offset, size);
         TintPalette_GrayScale(&gPlttBufferUnfaded[offset], size);
         break;
@@ -876,6 +877,7 @@ void ApplyGlobalTintToPaletteSlot(u8 slot, u8 count)
         TintPalette_SepiaTone(&gPlttBufferUnfaded[BG_PLTT_ID(slot)], count * 16);
         break;
     case QL_TINT_BACKUP_GRAYSCALE:
+        ApplyDayNightTint(&gPlttBufferUnfaded[BG_PLTT_ID(slot)], count * 16);
         QuestLog_BackUpPalette(BG_PLTT_ID(slot), count * 16);
         TintPalette_GrayScale(&gPlttBufferUnfaded[BG_PLTT_ID(slot)], count * 16);
         break;

@@ -908,12 +908,12 @@ static const struct WindowTemplate sWindowTemplates_Dummy[] =
 
 static const u8 sLevelNickTextColors[][3] =
 {
-    {0, 14, 10},
+    {0, 14, 9},
     {0, 1, 2},
     {0, 9, 8},
     {0, 5, 4},
     {0, 2, 3},
-    {0, 11, 10},
+    {0, 11, 9},
 };
 
 enum
@@ -927,7 +927,7 @@ static EWRAM_DATA u8 sSkillsStatDisplayMode = 0;
 
 static const u8 sStatTextColors[][3] =
 {
-    {0, 14, 10}, // Neutral (default dark grey)
+    {0, 14, 9}, // Neutral (default dark grey)
     {0, 1, 2},   // Boosted (+10%, red)
     {0, 7, 6},   // Hindered (-10%, blue)
 };

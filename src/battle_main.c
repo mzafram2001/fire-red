@@ -66,6 +66,413 @@ static void HandleEndTurn_FinishBattle(void);
 static void CB2_InitBattleInternal(void);
 static void CB2_PreInitMultiBattle(void);
 static void CB2_HandleStartMultiBattle(void);
+static void ApplyTrainerCompetitiveStatsAndItems(struct Pokemon *mon, u16 trainerNum, u8 partyIndex)
+{
+    u8 trainerClass;
+    u16 species;
+    u8 targetIV;
+    u16 totalEVs;
+    u8 primaryStat, secondaryStat;
+    u8 evValue;
+    u8 leftoverEV;
+    u16 heldItem;
+    u32 maxHp;
+
+    if (trainerNum == 0 || trainerNum == TRAINER_SECRET_BASE)
+        return;
+
+    species = GetMonData(mon, MON_DATA_SPECIES, NULL);
+    if (species == SPECIES_NONE || species == SPECIES_EGG)
+        return;
+
+    trainerClass = gTrainers[trainerNum].trainerClass;
+    targetIV = 0;
+    totalEVs = 0;
+
+    // 1. Determine Target IVs & Total EVs based on trainer importance
+    if (trainerClass == TRAINER_CLASS_CHAMPION || trainerClass == TRAINER_CLASS_ELITE_FOUR)
+    {
+        targetIV = 31;
+        totalEVs = 508;
+    }
+    else if (trainerClass == TRAINER_CLASS_RIVAL_EARLY || trainerClass == TRAINER_CLASS_RIVAL_LATE)
+    {
+        switch (trainerNum)
+        {
+        case TRAINER_RIVAL_OAKS_LAB_SQUIRTLE:
+        case TRAINER_RIVAL_OAKS_LAB_BULBASAUR:
+        case TRAINER_RIVAL_OAKS_LAB_CHARMANDER:
+            targetIV = 15;
+            totalEVs = 0; // Fair starter battle
+            break;
+        case TRAINER_RIVAL_ROUTE22_EARLY_SQUIRTLE:
+        case TRAINER_RIVAL_ROUTE22_EARLY_BULBASAUR:
+        case TRAINER_RIVAL_ROUTE22_EARLY_CHARMANDER:
+            targetIV = 16;
+            totalEVs = 30;
+            break;
+        case TRAINER_RIVAL_CERULEAN_SQUIRTLE:
+        case TRAINER_RIVAL_CERULEAN_BULBASAUR:
+        case TRAINER_RIVAL_CERULEAN_CHARMANDER:
+            targetIV = 18;
+            totalEVs = 60;
+            break;
+        case TRAINER_RIVAL_SS_ANNE_SQUIRTLE:
+        case TRAINER_RIVAL_SS_ANNE_BULBASAUR:
+        case TRAINER_RIVAL_SS_ANNE_CHARMANDER:
+            targetIV = 20;
+            totalEVs = 90;
+            break;
+        case TRAINER_RIVAL_POKEMON_TOWER_SQUIRTLE:
+        case TRAINER_RIVAL_POKEMON_TOWER_BULBASAUR:
+        case TRAINER_RIVAL_POKEMON_TOWER_CHARMANDER:
+            targetIV = 23;
+            totalEVs = 140;
+            break;
+        case TRAINER_RIVAL_SILPH_SQUIRTLE:
+        case TRAINER_RIVAL_SILPH_BULBASAUR:
+        case TRAINER_RIVAL_SILPH_CHARMANDER:
+            targetIV = 27;
+            totalEVs = 220;
+            break;
+        case TRAINER_RIVAL_ROUTE22_LATE_SQUIRTLE:
+        case TRAINER_RIVAL_ROUTE22_LATE_BULBASAUR:
+        case TRAINER_RIVAL_ROUTE22_LATE_CHARMANDER:
+            targetIV = 31;
+            totalEVs = 350;
+            break;
+        default:
+            targetIV = 25;
+            totalEVs = 150;
+            break;
+        }
+    }
+    else if (trainerClass == TRAINER_CLASS_LEADER || trainerClass == TRAINER_CLASS_BOSS)
+    {
+        switch (trainerNum)
+        {
+        case TRAINER_LEADER_BROCK:
+            targetIV = 15;
+            totalEVs = 40;
+            break;
+        case TRAINER_LEADER_MISTY:
+            targetIV = 18;
+            totalEVs = 70;
+            break;
+        case TRAINER_LEADER_LT_SURGE:
+            targetIV = 20;
+            totalEVs = 100;
+            break;
+        case TRAINER_LEADER_ERIKA:
+            targetIV = 22;
+            totalEVs = 130;
+            break;
+        case TRAINER_LEADER_KOGA:
+            targetIV = 25;
+            totalEVs = 170;
+            break;
+        case TRAINER_LEADER_SABRINA:
+            targetIV = 27;
+            totalEVs = 210;
+            break;
+        case TRAINER_LEADER_BLAINE:
+            targetIV = 29;
+            totalEVs = 250;
+            break;
+        case TRAINER_LEADER_GIOVANNI:
+        case TRAINER_BOSS_GIOVANNI_2:
+            targetIV = 30;
+            totalEVs = 300;
+            break;
+        default:
+            targetIV = 24;
+            totalEVs = 150;
+            break;
+        }
+    }
+    else if (trainerClass == TRAINER_CLASS_COOLTRAINER)
+    {
+        targetIV = 22;
+        totalEVs = 80;
+    }
+    else
+    {
+        // Common trainers: progressive IVs based on level
+        u8 monLvl = GetMonData(mon, MON_DATA_LEVEL, NULL);
+        targetIV = (monLvl * 25) / 100 + 6;
+        if (targetIV > 25)
+            targetIV = 25;
+    }
+
+    // Apply target IVs if higher than current
+    if (GetMonData(mon, MON_DATA_HP_IV, NULL) < targetIV)
+    {
+        SetMonData(mon, MON_DATA_HP_IV, &targetIV);
+        SetMonData(mon, MON_DATA_ATK_IV, &targetIV);
+        SetMonData(mon, MON_DATA_DEF_IV, &targetIV);
+        SetMonData(mon, MON_DATA_SPEED_IV, &targetIV);
+        SetMonData(mon, MON_DATA_SPATK_IV, &targetIV);
+        SetMonData(mon, MON_DATA_SPDEF_IV, &targetIV);
+    }
+
+    // 2. Distribute EVs based on Pokemon's stat archetype
+    if (totalEVs > 0)
+    {
+        u8 baseHp = gSpeciesInfo[species].baseHP;
+        u8 baseAtk = gSpeciesInfo[species].baseAttack;
+        u8 baseDef = gSpeciesInfo[species].baseDefense;
+        u8 baseSpd = gSpeciesInfo[species].baseSpeed;
+        u8 baseSpA = gSpeciesInfo[species].baseSpAttack;
+        u8 baseSpD = gSpeciesInfo[species].baseSpDefense;
+
+        if ((baseDef + baseSpD + baseHp) / 3 > (baseAtk + baseSpA) / 2 + 20)
+        {
+            // Tank / Wall: train HP + main Defense
+            primaryStat = MON_DATA_HP_EV;
+            secondaryStat = (baseDef >= baseSpD) ? MON_DATA_DEF_EV : MON_DATA_SPDEF_EV;
+        }
+        else if (baseAtk >= baseSpA)
+        {
+            // Physical Attacker: train Attack + Speed (or HP if slow)
+            primaryStat = MON_DATA_ATK_EV;
+            secondaryStat = (baseSpd >= 65) ? MON_DATA_SPEED_EV : MON_DATA_HP_EV;
+        }
+        else
+        {
+            // Special Attacker: train SpAttack + Speed (or HP if slow)
+            primaryStat = MON_DATA_SPATK_EV;
+            secondaryStat = (baseSpd >= 65) ? MON_DATA_SPEED_EV : MON_DATA_HP_EV;
+        }
+
+        evValue = totalEVs / 2;
+        if (evValue > 252)
+            evValue = 252;
+
+        SetMonData(mon, primaryStat, &evValue);
+        SetMonData(mon, secondaryStat, &evValue);
+
+        if (totalEVs >= 508)
+        {
+            leftoverEV = 4;
+            if (primaryStat != MON_DATA_HP_EV && secondaryStat != MON_DATA_HP_EV)
+                SetMonData(mon, MON_DATA_HP_EV, &leftoverEV);
+            else
+                SetMonData(mon, MON_DATA_DEF_EV, &leftoverEV);
+        }
+    }
+
+    if (totalEVs > 0 || targetIV > 0)
+    {
+        CalculateMonStats(mon);
+        maxHp = GetMonData(mon, MON_DATA_MAX_HP, NULL);
+        SetMonData(mon, MON_DATA_HP, &maxHp);
+    }
+
+    // 3. Assign Competitive Held Item for Leaders, Elite Four, Champion, Bosses & Rival
+    heldItem = GetMonData(mon, MON_DATA_HELD_ITEM, NULL);
+    if (heldItem == ITEM_NONE && (trainerClass == TRAINER_CLASS_LEADER || trainerClass == TRAINER_CLASS_ELITE_FOUR || trainerClass == TRAINER_CLASS_CHAMPION || trainerClass == TRAINER_CLASS_BOSS || trainerClass == TRAINER_CLASS_RIVAL_LATE || trainerClass == TRAINER_CLASS_RIVAL_EARLY))
+    {
+        switch (species)
+        {
+        // Gym 1 (Brock)
+        case SPECIES_ONIX:
+            heldItem = ITEM_SITRUS_BERRY;
+            break;
+        case SPECIES_GEODUDE:
+        case SPECIES_GRAVELER:
+            heldItem = ITEM_HARD_STONE;
+            break;
+        // Gym 2 (Misty)
+        case SPECIES_STARMIE:
+            heldItem = ITEM_MYSTIC_WATER;
+            break;
+        case SPECIES_STARYU:
+            heldItem = ITEM_SITRUS_BERRY;
+            break;
+        // Gym 3 (Lt. Surge)
+        case SPECIES_RAICHU:
+            heldItem = ITEM_MAGNET;
+            break;
+        case SPECIES_PIKACHU:
+            heldItem = ITEM_LIGHT_BALL;
+            break;
+        case SPECIES_VOLTORB:
+        case SPECIES_ELECTRODE:
+            heldItem = ITEM_SITRUS_BERRY;
+            break;
+        // Gym 4 (Erika)
+        case SPECIES_VILEPLUME:
+            heldItem = ITEM_LEFTOVERS;
+            break;
+        case SPECIES_VICTREEBEL:
+        case SPECIES_TANGELA:
+        case SPECIES_BELLOSSOM:
+            heldItem = ITEM_MIRACLE_SEED;
+            break;
+        // Gym 5 (Koga)
+        case SPECIES_WEEZING:
+            heldItem = ITEM_LEFTOVERS;
+            break;
+        case SPECIES_MUK:
+            heldItem = ITEM_POISON_BARB;
+            break;
+        case SPECIES_VENOMOTH:
+            heldItem = ITEM_SILVER_POWDER;
+            break;
+        // Gym 6 (Sabrina)
+        case SPECIES_ALAKAZAM:
+        case SPECIES_KADABRA:
+            heldItem = ITEM_TWISTED_SPOON;
+            break;
+        case SPECIES_MR_MIME:
+            heldItem = ITEM_LUM_BERRY;
+            break;
+        // Gym 7 (Blaine)
+        case SPECIES_ARCANINE:
+            heldItem = ITEM_WHITE_HERB;
+            break;
+        case SPECIES_RAPIDASH:
+        case SPECIES_NINETALES:
+            heldItem = ITEM_CHARCOAL;
+            break;
+        case SPECIES_MAGMAR:
+            heldItem = ITEM_SITRUS_BERRY;
+            break;
+        // Gym 8 & Boss (Giovanni)
+        case SPECIES_RHYDON:
+        case SPECIES_RHYHORN:
+            heldItem = ITEM_SOFT_SAND;
+            break;
+        case SPECIES_NIDOKING:
+        case SPECIES_NIDOQUEEN:
+            heldItem = ITEM_CHOICE_BAND;
+            break;
+        case SPECIES_DUGTRIO:
+            heldItem = ITEM_SOFT_SAND;
+            break;
+        case SPECIES_KANGASKHAN:
+            heldItem = ITEM_SILK_SCARF;
+            break;
+        // Lorelei
+        case SPECIES_LAPRAS:
+            heldItem = ITEM_LEFTOVERS;
+            break;
+        case SPECIES_CLOYSTER:
+            heldItem = ITEM_FOCUS_BAND;
+            break;
+        case SPECIES_SLOWBRO:
+            heldItem = ITEM_LEFTOVERS;
+            break;
+        case SPECIES_JYNX:
+            heldItem = ITEM_LUM_BERRY;
+            break;
+        case SPECIES_PILOSWINE:
+            heldItem = ITEM_NEVER_MELT_ICE;
+            break;
+        // Bruno
+        case SPECIES_MACHAMP:
+            heldItem = ITEM_CHOICE_BAND;
+            break;
+        case SPECIES_HITMONLEE:
+        case SPECIES_HITMONCHAN:
+            heldItem = ITEM_BLACK_BELT;
+            break;
+        case SPECIES_STEELIX:
+            heldItem = ITEM_LEFTOVERS;
+            break;
+        // Agatha
+        case SPECIES_GENGAR:
+        case SPECIES_HAUNTER:
+            heldItem = ITEM_SPELL_TAG;
+            break;
+        case SPECIES_CROBAT:
+        case SPECIES_GOLBAT:
+            heldItem = ITEM_LUM_BERRY;
+            break;
+        case SPECIES_ARBOK:
+            heldItem = ITEM_POISON_BARB;
+            break;
+        case SPECIES_MISDREAVUS:
+            heldItem = ITEM_LEFTOVERS;
+            break;
+        // Lance
+        case SPECIES_DRAGONITE:
+        case SPECIES_DRAGONAIR:
+            heldItem = ITEM_LUM_BERRY;
+            break;
+        case SPECIES_GYARADOS:
+            heldItem = ITEM_LEFTOVERS;
+            break;
+        case SPECIES_AERODACTYL:
+            heldItem = ITEM_CHOICE_BAND;
+            break;
+        case SPECIES_KINGDRA:
+            heldItem = ITEM_SCOPE_LENS;
+            break;
+        // Champion / Rival
+        case SPECIES_CHARIZARD:
+        case SPECIES_CHARMELEON:
+            heldItem = ITEM_CHARCOAL;
+            break;
+        case SPECIES_CHARMANDER:
+            heldItem = (GetMonData(mon, MON_DATA_LEVEL, NULL) <= 10) ? ITEM_ORAN_BERRY : ITEM_CHARCOAL;
+            break;
+        case SPECIES_BLASTOISE:
+        case SPECIES_WARTORTLE:
+            heldItem = ITEM_LEFTOVERS;
+            break;
+        case SPECIES_SQUIRTLE:
+            heldItem = (GetMonData(mon, MON_DATA_LEVEL, NULL) <= 10) ? ITEM_ORAN_BERRY : ITEM_MYSTIC_WATER;
+            break;
+        case SPECIES_VENUSAUR:
+        case SPECIES_IVYSAUR:
+            heldItem = ITEM_LEFTOVERS;
+            break;
+        case SPECIES_BULBASAUR:
+            heldItem = (GetMonData(mon, MON_DATA_LEVEL, NULL) <= 10) ? ITEM_ORAN_BERRY : ITEM_MIRACLE_SEED;
+            break;
+        case SPECIES_PIDGEY:
+        case SPECIES_PIDGEOTTO:
+            heldItem = (GetMonData(mon, MON_DATA_LEVEL, NULL) <= 10) ? ITEM_ORAN_BERRY : ITEM_SHARP_BEAK;
+            break;
+        case SPECIES_RATTATA:
+        case SPECIES_RATICATE:
+            heldItem = (GetMonData(mon, MON_DATA_LEVEL, NULL) <= 10) ? ITEM_ORAN_BERRY : ITEM_SILK_SCARF;
+            break;
+        case SPECIES_ABRA:
+            heldItem = ITEM_TWISTED_SPOON;
+            break;
+        case SPECIES_PIDGEOT:
+            heldItem = ITEM_SHARP_BEAK;
+            break;
+        case SPECIES_EXEGGUTOR:
+            heldItem = ITEM_LUM_BERRY;
+            break;
+        case SPECIES_TYRANITAR:
+            heldItem = ITEM_CHOICE_BAND;
+            break;
+        case SPECIES_HERACROSS:
+            heldItem = ITEM_CHOICE_BAND;
+            break;
+        case SPECIES_SNORLAX:
+            heldItem = ITEM_LEFTOVERS;
+            break;
+        default:
+            if (gSpeciesInfo[species].baseHP >= 85 || (gSpeciesInfo[species].baseDefense + gSpeciesInfo[species].baseSpDefense) >= 170)
+                heldItem = ITEM_LEFTOVERS;
+            else if (gSpeciesInfo[species].baseAttack >= 100 && gSpeciesInfo[species].baseSpeed >= 80)
+                heldItem = ITEM_CHOICE_BAND;
+            else if (gSpeciesInfo[species].baseSpAttack >= 95)
+                heldItem = ITEM_LUM_BERRY;
+            else
+                heldItem = ITEM_SITRUS_BERRY;
+            break;
+        }
+
+        SetMonData(mon, MON_DATA_HELD_ITEM, &heldItem);
+    }
+}
+
 static u8 CreateNPCTrainerParty(struct Pokemon *party, u16 trainerNum);
 static void CB2_HandleStartBattle(void);
 static void TryCorrectShedinjaLanguage(struct Pokemon *mon);
@@ -1643,6 +2050,8 @@ static u8 CreateNPCTrainerParty(struct Pokemon *party, u16 trainerNum)
                 break;
             }
             }
+
+            ApplyTrainerCompetitiveStatsAndItems(&party[i], trainerNum, i);
         }
 
         gBattleTypeFlags |= gTrainers[trainerNum].doubleBattle;
@@ -2273,7 +2682,10 @@ static void BattleStartClearSetData(void)
     if (!(gBattleTypeFlags & (BATTLE_TYPE_LINK | BATTLE_TYPE_POKEDUDE)) && gSaveBlock2Ptr->optionsBattleSceneOff)
         gHitMarker |= HITMARKER_NO_ANIMATIONS;
 
-    gBattleScripting.battleStyle = gSaveBlock2Ptr->optionsBattleStyle;
+    if (gBattleTypeFlags & BATTLE_TYPE_TRAINER)
+        gBattleScripting.battleStyle = OPTIONS_BATTLE_STYLE_SET;
+    else
+        gBattleScripting.battleStyle = gSaveBlock2Ptr->optionsBattleStyle;
 
     gMultiHitCounter = 0;
     gBattleOutcome = 0;

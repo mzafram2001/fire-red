@@ -3,6 +3,7 @@
 
 #include "global.h"
 
+u8 GetTimeOfDay(void);
 void ApplyDayNightTint(u16 *palette, u16 count);
 void CheckDayNightChange(void);
 

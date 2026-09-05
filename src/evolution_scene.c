@@ -636,9 +636,8 @@ static void Task_EvolutionScene(u8 taskId)
     u32 var;
     struct Pokemon* mon = &gPlayerParty[gTasks[taskId].tPartyId];
 
-    // Automatically cancel if the Pokemon would evolve into a species you have not
-    // yet unlocked, such as Crobat.
-    if (!IsNationalPokedexEnabled()
+    // In hack roms, allow evolution into post-Gen 1 species (Steelix, Scizor, Crobat, etc.) without National Dex
+    if (FALSE && !IsNationalPokedexEnabled()
         && gTasks[taskId].tState == EVOSTATE_WAIT_CYCLE_MON_SPRITE
         && gTasks[taskId].tPostEvoSpecies > SPECIES_MEW)
     {
@@ -782,6 +781,20 @@ static void Task_EvolutionScene(u8 taskId)
             GetSetPokedexFlag(SpeciesToNationalPokedexNum(gTasks[taskId].tPostEvoSpecies), FLAG_SET_SEEN);
             GetSetPokedexFlag(SpeciesToNationalPokedexNum(gTasks[taskId].tPostEvoSpecies), FLAG_SET_CAUGHT);
             IncrementGameStat(GAME_STAT_EVOLVED_POKEMON);
+
+            {
+                int i;
+                for (i = 0; i < EVOS_PER_MON; i++)
+                {
+                    if (gEvolutionTable[gTasks[taskId].tPreEvoSpecies][i].targetSpecies == gTasks[taskId].tPostEvoSpecies
+                     && gEvolutionTable[gTasks[taskId].tPreEvoSpecies][i].method == EVO_HOLD_ITEM)
+                    {
+                        u16 item = ITEM_NONE;
+                        SetMonData(mon, MON_DATA_HELD_ITEM, &item);
+                        break;
+                    }
+                }
+            }
         }
         break;
     case EVOSTATE_TRY_LEARN_MOVE:
@@ -1094,9 +1107,8 @@ static void Task_TradeEvolutionScene(u8 taskId)
     u32 var = 0;
     struct Pokemon* mon = &gPlayerParty[gTasks[taskId].tPartyId];
 
-    // Automatically cancel if the Pokemon would evolve into a species you have not
-    // yet unlocked, such as Crobat.
-    if (!IsNationalPokedexEnabled()
+    // In hack roms, allow evolution into post-Gen 1 species without National Dex
+    if (FALSE && !IsNationalPokedexEnabled()
         && gTasks[taskId].tState == T_EVOSTATE_WAIT_CYCLE_MON_SPRITE
         && gTasks[taskId].tPostEvoSpecies > SPECIES_MEW)
     {

@@ -50,8 +50,8 @@ gBattleAI_ScriptsTable::
 	.4byte AI_FirstBattle
 
 AI_CheckBadMove::
-@	if_move MOVE_FISSURE, AI_CBM_CheckIfNegatesType  @ Improvement in Emerald
-@	if_move MOVE_HORN_DRILL, AI_CBM_CheckIfNegatesType
+	if_move MOVE_FISSURE, AI_CBM_CheckIfNegatesType  @ Improvement in Emerald
+	if_move MOVE_HORN_DRILL, AI_CBM_CheckIfNegatesType
 	get_how_powerful_move_is
 	if_equal MOVE_POWER_DISCOURAGED, AI_CheckBadMove_CheckSoundproof
 
@@ -218,7 +218,7 @@ AI_CBM_Sleep::
 	if_equal ABILITY_INSOMNIA, Score_Minus10
 	if_equal ABILITY_VITAL_SPIRIT, Score_Minus10
 	if_status AI_TARGET, STATUS1_ANY, Score_Minus10
-@	if_side_affecting AI_TARGET, SIDE_STATUS_SAFEGUARD, Score_Minus10  @ Improvement in Emerald
+	if_side_affecting AI_TARGET, SIDE_STATUS_SAFEGUARD, Score_Minus10  @ Improvement in Emerald
 	end
 
 AI_CBM_Explosion::
@@ -287,8 +287,8 @@ AI_CBM_DefenseDown::
 
 AI_CBM_SpeedDown::
 	if_stat_level_equal AI_TARGET, STAT_SPEED, 0, Score_Minus10
-@	get_ability AI_TARGET  @ Improvement in Emerald
-@	if_equal ABILITY_SPEED_BOOST, Score_Minus10
+	get_ability AI_TARGET  @ Improvement in Emerald
+	if_equal ABILITY_SPEED_BOOST, Score_Minus10
 	goto CheckIfAbilityBlocksStatChange
 
 AI_CBM_SpAtkDown::
@@ -351,7 +351,7 @@ AI_CBM_Poison::
 	get_ability AI_TARGET
 	if_equal ABILITY_IMMUNITY, Score_Minus10
 	if_status AI_TARGET, STATUS1_ANY, Score_Minus10
-@	if_side_affecting AI_TARGET, SIDE_STATUS_SAFEGUARD, Score_Minus10  @ Improvement in Emerald
+	if_side_affecting AI_TARGET, SIDE_STATUS_SAFEGUARD, Score_Minus10  @ Improvement in Emerald
 	end
 
 AI_CBM_LightScreen::
@@ -391,7 +391,7 @@ AI_CBM_Confuse::
 	if_status2 AI_TARGET, STATUS2_CONFUSION, Score_Minus5
 	get_ability AI_TARGET
 	if_equal ABILITY_OWN_TEMPO, Score_Minus10
-@	if_side_affecting AI_TARGET, SIDE_STATUS_SAFEGUARD, Score_Minus10  @ Improvement in Emerald
+	if_side_affecting AI_TARGET, SIDE_STATUS_SAFEGUARD, Score_Minus10  @ Improvement in Emerald
 	end
 
 AI_CBM_Reflect::
@@ -403,7 +403,7 @@ AI_CBM_Paralyze::
 	get_ability AI_TARGET
 	if_equal ABILITY_LIMBER, Score_Minus10
 	if_status AI_TARGET, STATUS1_ANY, Score_Minus10
-@	if_side_affecting AI_TARGET, SIDE_STATUS_SAFEGUARD, Score_Minus10  @ Improvement in Emerald
+	if_side_affecting AI_TARGET, SIDE_STATUS_SAFEGUARD, Score_Minus10  @ Improvement in Emerald
 	end
 
 AI_CBM_Substitute::
@@ -504,7 +504,7 @@ AI_CBM_SunnyDay::
 
 AI_CBM_FutureSight::
 	if_side_affecting AI_TARGET, SIDE_STATUS_FUTUREATTACK, Score_Minus10
-@	if_side_affecting AI_USER, SIDE_STATUS_FUTUREATTACK, Score_Minus12  @ Improvement in Emerald
+	if_side_affecting AI_USER, SIDE_STATUS_FUTUREATTACK, Score_Minus12  @ Improvement in Emerald
 	end
 
 AI_CBM_FakeOut::
@@ -539,7 +539,7 @@ AI_CBM_WillOWisp::
 	if_type_effectiveness AI_EFFECTIVENESS_x0, Score_Minus10
 	if_type_effectiveness AI_EFFECTIVENESS_x0_5, Score_Minus10
 	if_type_effectiveness AI_EFFECTIVENESS_x0_25, Score_Minus10
-@	if_side_affecting AI_TARGET, SIDE_STATUS_SAFEGUARD, Score_Minus10  @ Improvement in Emerald
+	if_side_affecting AI_TARGET, SIDE_STATUS_SAFEGUARD, Score_Minus10  @ Improvement in Emerald
 	end
 
 AI_CBM_HelpingHand::
@@ -646,9 +646,9 @@ Score_Plus5::
 	end
 
 @ Improvement in Emerald
-@Score_Plus10::
-@	score +10
-@	end
+Score_Plus10::
+	score +10
+	end
 
 AI_CheckViability::
 	if_effect EFFECT_SLEEP, AI_CV_Sleep
@@ -1903,8 +1903,8 @@ AI_CV_LockOn_End::
 	end
 
 AI_CV_SleepTalk::
-@	if_status AI_USER, STATUS1_SLEEP, Score_Plus10  @ Improvement in Emerald
-	score +2   @ Change to -5
+	if_status AI_USER, STATUS1_SLEEP, Score_Plus10  @ Improvement in Emerald
+	score -5
 	end
 
 AI_CV_DestinyBond::
@@ -2768,22 +2768,22 @@ AI_TryToFaint::
 	if_can_faint AI_TryToFaint_TryToEncourageQuickAttack
 	get_how_powerful_move_is
 	if_equal MOVE_NOT_MOST_POWERFUL, Score_Minus1
-@	if_type_effectiveness AI_EFFECTIVENESS_x4, AI_TryToFaint_DoubleSuperEffective  @ Improvement in Emerald
+	if_type_effectiveness AI_EFFECTIVENESS_x4, AI_TryToFaint_DoubleSuperEffective  @ Improvement in Emerald
 	end
 
 @ Improvement in Emerald
-@AI_TryToFaint_DoubleSuperEffective:
-@	if_random_less_than 80, AI_TryToFaint_End
-@	score +2
-@	end
+AI_TryToFaint_DoubleSuperEffective:
+	if_random_less_than 80, AI_TryToFaint_End
+	score +2
+	end
 
 AI_TryToFaint_TryToEncourageQuickAttack::
 	if_effect EFFECT_EXPLOSION, AI_TryToFaint_End
 	if_not_effect EFFECT_QUICK_ATTACK, AI_TryToFaint_ScoreUp4
-	score +2
+	score +3
 
 AI_TryToFaint_ScoreUp4::
-	score +4
+	score +6
 
 AI_TryToFaint_End::
 	end
@@ -2859,9 +2859,8 @@ AI_SetupFirstTurn_SetupEffectsToEncourage::
 
 AI_PreferStrongestMove::
 	get_how_powerful_move_is
-	if_not_equal MOVE_POWER_DISCOURAGED, AI_PreferStrongestMove_End
-	if_random_less_than 100, AI_PreferStrongestMove_End
-	score +2
+	if_not_equal MOVE_MOST_POWERFUL, AI_PreferStrongestMove_End
+	score +4
 
 AI_PreferStrongestMove_End::
 	end
