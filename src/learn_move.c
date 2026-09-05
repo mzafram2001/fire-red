@@ -816,7 +816,8 @@ static void MoveLearnerInitListMenu(void)
 static void PrintMoveInfo(u16 move)
 {
     u8 buffer[50];
-    BlitMenuInfoIcon(2, gBattleMoves[move].type + 1, 1, 4);
+    LoadPalette(&gTypeColors[gBattleMoves[move].type], BG_PLTT_ID(13) + 1, sizeof(u16));
+    BlitMenuInfoIconWithColor(2, gBattleMoves[move].type + 1, 1, 4, 1);
 
     if (gBattleMoves[move].power < 2)
     {

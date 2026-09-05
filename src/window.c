@@ -334,6 +334,22 @@ void BlitBitmapRectToWindow(u8 windowId, const u8 *pixels, u16 srcX, u16 srcY, u
     BlitBitmapRect4Bit(&sourceRect, &destRect, srcX, srcY, destX, destY, rectWidth, rectHeight, 0);
 }
 
+void BlitBitmapRectToWindowOverrideColor(u8 windowId, const u8 *pixels, u16 srcX, u16 srcY, u16 srcWidth, int srcHeight, u16 destX, u16 destY, u16 rectWidth, u16 rectHeight, u8 overrideColor)
+{
+    struct Bitmap sourceRect;
+    struct Bitmap destRect;
+
+    sourceRect.pixels = (u8 *)pixels;
+    sourceRect.width = srcWidth;
+    sourceRect.height = srcHeight;
+
+    destRect.pixels = gWindows[windowId].tileData;
+    destRect.width = 8 * gWindows[windowId].window.width;
+    destRect.height = 8 * gWindows[windowId].window.height;
+
+    BlitBitmapRect4BitOverrideColor(&sourceRect, &destRect, srcX, srcY, destX, destY, rectWidth, rectHeight, 0, overrideColor);
+}
+
 void BlitBitmapRectToWindowWithColorKey(u8 windowId, const u8 *pixels, u16 srcX, u16 srcY, u16 srcWidth, int srcHeight, u16 destX, u16 destY, u16 rectWidth, u16 rectHeight, u8 colorKey)
 {
     struct Bitmap sourceRect;

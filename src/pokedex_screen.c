@@ -3091,9 +3091,15 @@ u8 DexScreen_DrawMonAreaPage(void)
 
     if (monIsCaught)
     {
-        BlitMenuInfoIcon(sPokedexScreenData->windowIds[12], 1 + gSpeciesInfo[species].types[0], 0, 1);
-        if (gSpeciesInfo[species].types[0] != gSpeciesInfo[species].types[1])
-            BlitMenuInfoIcon(sPokedexScreenData->windowIds[12], 1 + gSpeciesInfo[species].types[1], 32, 1);
+        u8 t0 = gSpeciesInfo[species].types[0];
+        u8 t1 = gSpeciesInfo[species].types[1];
+        LoadPalette(&gTypeColors[t0], BG_PLTT_ID(11) + 1, sizeof(u16));
+        BlitMenuInfoIconWithColor(sPokedexScreenData->windowIds[12], 1 + t0, 0, 1, 1);
+        if (t0 != t1)
+        {
+            LoadPalette(&gTypeColors[t1], BG_PLTT_ID(11) + 2, sizeof(u16));
+            BlitMenuInfoIconWithColor(sPokedexScreenData->windowIds[12], 1 + t1, 32, 1, 2);
+        }
     }
     PutWindowTilemap(sPokedexScreenData->windowIds[12]);
     CopyWindowToVram(sPokedexScreenData->windowIds[12], COPYWIN_GFX);

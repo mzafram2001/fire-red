@@ -3030,11 +3030,15 @@ static void PokeSum_DrawMoveTypeIcons(void)
         if (sMonSummaryScreen->moveIds[i] == MOVE_NONE)
             continue;
 
-        BlitMenuInfoIcon(sMonSummaryScreen->windowIds[5], sMonSummaryScreen->moveTypes[i] + 1, 3, GetMoveNamePrinterYpos(i));
+        LoadPalette(&gTypeColors[sMonSummaryScreen->moveTypes[i]], BG_PLTT_ID(6) + 1 + i, sizeof(u16));
+        BlitMenuInfoIconWithColor(sMonSummaryScreen->windowIds[5], sMonSummaryScreen->moveTypes[i] + 1, 3, GetMoveNamePrinterYpos(i), 1 + i);
     }
 
     if (sMonSummaryScreen->mode == PSS_MODE_SELECT_MOVE)
-        BlitMenuInfoIcon(sMonSummaryScreen->windowIds[5], sMonSummaryScreen->moveTypes[4] + 1, 3, GetMoveNamePrinterYpos(4));
+    {
+        LoadPalette(&gTypeColors[sMonSummaryScreen->moveTypes[4]], BG_PLTT_ID(6) + 5, sizeof(u16));
+        BlitMenuInfoIconWithColor(sMonSummaryScreen->windowIds[5], sMonSummaryScreen->moveTypes[4] + 1, 3, GetMoveNamePrinterYpos(4), 5);
+    }
 }
 
 static void PokeSum_PrintPageHeaderText(u8 curPageIndex)
@@ -3488,10 +3492,14 @@ static void PokeSum_PrintMonTypeIcons(void)
     case PSS_PAGE_INFO:
         if (!sMonSummaryScreen->isEgg)
         {
-            BlitMenuInfoIcon(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], sMonSummaryScreen->monTypes[0] + 1, 47, 35);
+            LoadPalette(&gTypeColors[sMonSummaryScreen->monTypes[0]], BG_PLTT_ID(6) + 1, sizeof(u16));
+            BlitMenuInfoIconWithColor(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], sMonSummaryScreen->monTypes[0] + 1, 47, 35, 1);
 
             if (sMonSummaryScreen->monTypes[0] != sMonSummaryScreen->monTypes[1])
-                BlitMenuInfoIcon(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], sMonSummaryScreen->monTypes[1] + 1, 83, 35);
+            {
+                LoadPalette(&gTypeColors[sMonSummaryScreen->monTypes[1]], BG_PLTT_ID(6) + 2, sizeof(u16));
+                BlitMenuInfoIconWithColor(sMonSummaryScreen->windowIds[POKESUM_WIN_RIGHT_PANE], sMonSummaryScreen->monTypes[1] + 1, 83, 35, 2);
+            }
         }
         break;
     case PSS_PAGE_SKILLS:
@@ -3500,10 +3508,14 @@ static void PokeSum_PrintMonTypeIcons(void)
         break;
     case PSS_PAGE_MOVES_INFO:
         FillWindowPixelBuffer(sMonSummaryScreen->windowIds[6], 0);
-        BlitMenuInfoIcon(sMonSummaryScreen->windowIds[6], sMonSummaryScreen->monTypes[0] + 1, 0, 3);
+        LoadPalette(&gTypeColors[sMonSummaryScreen->monTypes[0]], BG_PLTT_ID(6) + 1, sizeof(u16));
+        BlitMenuInfoIconWithColor(sMonSummaryScreen->windowIds[6], sMonSummaryScreen->monTypes[0] + 1, 0, 3, 1);
 
         if (sMonSummaryScreen->monTypes[0] != sMonSummaryScreen->monTypes[1])
-            BlitMenuInfoIcon(sMonSummaryScreen->windowIds[6], sMonSummaryScreen->monTypes[1] + 1, 36, 3);
+        {
+            LoadPalette(&gTypeColors[sMonSummaryScreen->monTypes[1]], BG_PLTT_ID(6) + 2, sizeof(u16));
+            BlitMenuInfoIconWithColor(sMonSummaryScreen->windowIds[6], sMonSummaryScreen->monTypes[1] + 1, 36, 3, 2);
+        }
 
         PutWindowTilemap(sMonSummaryScreen->windowIds[6]);
         break;

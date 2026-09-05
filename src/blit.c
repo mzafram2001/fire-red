@@ -210,3 +210,51 @@ void FillBitmapRect8Bit(struct Bitmap *surface, u16 x, u16 y, u16 width, u16 hei
         }
     }
 }
+
+void BlitBitmapRect4BitOverrideColor(const struct Bitmap *src, struct Bitmap *dst, u16 srcX, u16 srcY, u16 dstX, u16 dstY, u16 width, u16 height, u8 colorKey, u8 overrideColor)
+{
+    s32 xEnd;
+    s32 yEnd;
+    s32 multiplierSrcY;
+    s32 multiplierDstY;
+    s32 loopSrcY, loopDstY;
+    s32 loopSrcX, loopDstX;
+    const u8 *pixelsSrc;
+    u8 *pixelsDst;
+    s32 toOrr;
+    s32 toAnd;
+    s32 toShift;
+
+    if (dst->width - dstX < width)
+        xEnd = (dst->width - dstX) + srcX;
+    else
+        xEnd = srcX + width;
+
+    if (dst->height - dstY < height)
+        yEnd = (dst->height - dstY) + srcY;
+    else
+        yEnd = height + srcY;
+
+    multiplierSrcY = (src->width + (src->width & 7)) >> 3;
+    multiplierDstY = (dst->width + (dst->width & 7)) >> 3;
+
+    for (loopSrcY = srcY, loopDstY = dstY; loopSrcY < yEnd; loopSrcY++, loopDstY++)
+    {
+        for (loopSrcX = srcX, loopDstX = dstX; loopSrcX < xEnd; loopSrcX++, loopDstX++)
+        {
+            pixelsSrc = src->pixels + ((loopSrcX >> 1) & 3) + ((loopSrcX >> 3) << 5) + (((loopSrcY >> 3) * multiplierSrcY) << 5) + ((u32)(loopSrcY << 0x1d) >> 0x1B);
+            pixelsDst = dst->pixels + ((loopDstX >> 1) & 3) + ((loopDstX >> 3) << 5) + (((loopDstY >> 3) * multiplierDstY) << 5) + ((u32)(loopDstY << 0x1d) >> 0x1B);
+            toOrr = ((*pixelsSrc >> ((loopSrcX & 1) << 2)) & 0xF);
+            if (toOrr != colorKey)
+            {
+                if (overrideColor && toOrr != 14 && toOrr != 15)
+                    toOrr = overrideColor;
+
+                toShift = ((loopDstX & 1) << 2);
+                toOrr <<= toShift;
+                toAnd = 0xF0 >> (toShift);
+                *pixelsDst = toOrr | (*pixelsDst & toAnd);
+            }
+        }
+    }
+}

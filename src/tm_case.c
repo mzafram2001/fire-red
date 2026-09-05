@@ -1555,7 +1555,8 @@ static void PrintMoveInfo(u16 itemId)
     {
         // Draw type icon
         move = ItemIdToBattleMoveId(itemId);
-        BlitMenuInfoIcon(WIN_MOVE_INFO, gBattleMoves[move].type + 1, 0, 0);
+        LoadPalette(&gTypeColors[gBattleMoves[move].type], BG_PLTT_ID(12) + 1, sizeof(u16));
+    BlitMenuInfoIconWithColor(WIN_MOVE_INFO, gBattleMoves[move].type + 1, 0, 0, 1);
 
         // Print power
         if (gBattleMoves[move].power < 2)

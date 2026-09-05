@@ -753,7 +753,34 @@ void ListMenuLoadStdPalAt(u8 palOffset, u8 palId)
     LoadPalette(palette, palOffset, PLTT_SIZE_4BPP);
 }
 
+const u16 gTypeColors[NUMBER_OF_MON_TYPES] = {
+    [TYPE_NORMAL]   = 0x3EB5, // #ACAC7B
+    [TYPE_FIGHTING] = 0x00DD, // #EE3100
+    [TYPE_FLYING]   = 0x6E8F, // #7da6de
+    [TYPE_POISON]   = 0x59B6, // #b468b7
+    [TYPE_GROUND]   = 0x2A79, // #cc9f4f
+    [TYPE_ROCK]     = 0x1E97, // #BDA439
+    [TYPE_BUG]      = 0x26F2, // #94bc4a
+    [TYPE_GHOST]    = 0x5114, // #A441A4
+    [TYPE_STEEL]    = 0x5691, // #89a1b0
+    [TYPE_MYSTERY]  = 0x45EA, // #527B8B
+    [TYPE_FIRE]     = 0x1A1E, // #F68331
+    [TYPE_WATER]    = 0x7A4D, // #6A94F6
+    [TYPE_GRASS]    = 0x2B2F, // #7BCD52
+    [TYPE_ELECTRIC] = 0x0ADF, // #FFB410
+    [TYPE_PSYCHIC]  = 0x457F, // #FF5A8B
+    [TYPE_ICE]      = 0x6F73, // #9CDEDE
+    [TYPE_DRAGON]   = 0x55ED, // #6a7baf
+    [TYPE_DARK]     = 0x45EA, // #527B8B
+    [TYPE_FAIRY]    = 0x5E5E, // #F890C0
+};
+
 void BlitMenuInfoIcon(u8 windowId, u8 iconId, u16 x, u16 y)
 {
     BlitBitmapRectToWindow(windowId, &gMenuInfoElements_Gfx[sMenuInfoIcons[iconId].offset * TILE_SIZE_4BPP], 0, 0, 128, 128, x, y, sMenuInfoIcons[iconId].width, sMenuInfoIcons[iconId].height);
+}
+
+void BlitMenuInfoIconWithColor(u8 windowId, u8 iconId, u16 x, u16 y, u8 overrideColor)
+{
+    BlitBitmapRectToWindowOverrideColor(windowId, &gMenuInfoElements_Gfx[sMenuInfoIcons[iconId].offset * TILE_SIZE_4BPP], 0, 0, 128, 128, x, y, sMenuInfoIcons[iconId].width, sMenuInfoIcons[iconId].height, overrideColor);
 }

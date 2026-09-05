@@ -39,6 +39,8 @@ void ListMenu_LoadMonIconPalette(u8 palOffset, u16 speciesId);
 void ListMenu_DrawMonIconGraphics(u8 windowId, u16 speciesId, u32 personality, u16 x, u16 y);
 void ListMenuLoadStdPalAt(u8 palOffset, u8 palId);
 void BlitMenuInfoIcon(u8 windowId, u8 iconId, u16 x, u16 y);
+void BlitMenuInfoIconWithColor(u8 windowId, u8 iconId, u16 x, u16 y, u8 overrideColor);
+extern const u16 gTypeColors[NUMBER_OF_MON_TYPES];
 
 // menu
 s8 Menu_ProcessInputGridLayout(void);
