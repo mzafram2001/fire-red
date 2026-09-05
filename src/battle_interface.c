@@ -1,6 +1,7 @@
 #include "global.h"
 #include "gflib.h"
 #include "battle_anim.h"
+#include "battle.h"
 #include "battle_interface.h"
 #include "battle_message.h"
 #include "decompress.h"
@@ -530,6 +531,166 @@ static void Debug_DrawNumberPair(s16 num1, s16 num2, u16 *dest)
 #define sHealthboxSpriteId      data[5]
 #define sHealthbarType          data[6]
 
+// sprite data for type icon sprites
+#define sTypeIconHealthboxSpriteId data[0]
+#define sTypeIconBattlerId         data[1]
+#define sTypeIconSlot              data[2]
+#define sTypeIconIsDual            data[3]
+
+static const struct OamData sOamData_HealthboxTypeIcon = {
+    .shape = SPRITE_SHAPE(32x16),
+    .size = SPRITE_SIZE(32x16),
+    .priority = 1
+};
+
+static void SpriteCB_HealthBoxTypeIcon(struct Sprite *sprite);
+static void UpdateHealthboxTypeIcons(u8 healthboxSpriteId, struct Pokemon *mon);
+
+static EWRAM_DATA u8 sHealthboxTypeIconSpriteIds[MAX_BATTLERS_COUNT][2] = {0};
+
+static const struct SpriteTemplate sHealthboxTypeIconSpriteTemplates[MAX_BATTLERS_COUNT][2] = {
+    [0] = {
+        {
+            .tileTag = TAG_HEALTHBOX_TYPE_ICON_P1_T1_TILE,
+            .paletteTag = TAG_HEALTHBOX_TYPE_ICONS_PAL,
+            .oam = &sOamData_HealthboxTypeIcon,
+            .anims = gDummySpriteAnimTable,
+            .affineAnims = gDummySpriteAffineAnimTable,
+            .callback = SpriteCB_HealthBoxTypeIcon
+        },
+        {
+            .tileTag = TAG_HEALTHBOX_TYPE_ICON_P1_T2_TILE,
+            .paletteTag = TAG_HEALTHBOX_TYPE_ICONS_PAL,
+            .oam = &sOamData_HealthboxTypeIcon,
+            .anims = gDummySpriteAnimTable,
+            .affineAnims = gDummySpriteAffineAnimTable,
+            .callback = SpriteCB_HealthBoxTypeIcon
+        }
+    },
+    [1] = {
+        {
+            .tileTag = TAG_HEALTHBOX_TYPE_ICON_O1_T1_TILE,
+            .paletteTag = TAG_HEALTHBOX_TYPE_ICONS_PAL,
+            .oam = &sOamData_HealthboxTypeIcon,
+            .anims = gDummySpriteAnimTable,
+            .affineAnims = gDummySpriteAffineAnimTable,
+            .callback = SpriteCB_HealthBoxTypeIcon
+        },
+        {
+            .tileTag = TAG_HEALTHBOX_TYPE_ICON_O1_T2_TILE,
+            .paletteTag = TAG_HEALTHBOX_TYPE_ICONS_PAL,
+            .oam = &sOamData_HealthboxTypeIcon,
+            .anims = gDummySpriteAnimTable,
+            .affineAnims = gDummySpriteAffineAnimTable,
+            .callback = SpriteCB_HealthBoxTypeIcon
+        }
+    },
+    [2] = {
+        {
+            .tileTag = TAG_HEALTHBOX_TYPE_ICON_P2_T1_TILE,
+            .paletteTag = TAG_HEALTHBOX_TYPE_ICONS_PAL,
+            .oam = &sOamData_HealthboxTypeIcon,
+            .anims = gDummySpriteAnimTable,
+            .affineAnims = gDummySpriteAffineAnimTable,
+            .callback = SpriteCB_HealthBoxTypeIcon
+        },
+        {
+            .tileTag = TAG_HEALTHBOX_TYPE_ICON_P2_T2_TILE,
+            .paletteTag = TAG_HEALTHBOX_TYPE_ICONS_PAL,
+            .oam = &sOamData_HealthboxTypeIcon,
+            .anims = gDummySpriteAnimTable,
+            .affineAnims = gDummySpriteAffineAnimTable,
+            .callback = SpriteCB_HealthBoxTypeIcon
+        }
+    },
+    [3] = {
+        {
+            .tileTag = TAG_HEALTHBOX_TYPE_ICON_O2_T1_TILE,
+            .paletteTag = TAG_HEALTHBOX_TYPE_ICONS_PAL,
+            .oam = &sOamData_HealthboxTypeIcon,
+            .anims = gDummySpriteAnimTable,
+            .affineAnims = gDummySpriteAffineAnimTable,
+            .callback = SpriteCB_HealthBoxTypeIcon
+        },
+        {
+            .tileTag = TAG_HEALTHBOX_TYPE_ICON_O2_T2_TILE,
+            .paletteTag = TAG_HEALTHBOX_TYPE_ICONS_PAL,
+            .oam = &sOamData_HealthboxTypeIcon,
+            .anims = gDummySpriteAnimTable,
+            .affineAnims = gDummySpriteAffineAnimTable,
+            .callback = SpriteCB_HealthBoxTypeIcon
+        }
+    },
+};
+
+static const u8 sTypeToMenuInfoTileOffset[NUMBER_OF_MON_TYPES] = {
+    [TYPE_NORMAL]   = 0x20,
+    [TYPE_FIGHTING] = 0x64,
+    [TYPE_FLYING]   = 0x60,
+    [TYPE_POISON]   = 0x80,
+    [TYPE_GROUND]   = 0x48,
+    [TYPE_ROCK]     = 0x44,
+    [TYPE_BUG]      = 0x6C,
+    [TYPE_GHOST]    = 0x68,
+    [TYPE_STEEL]    = 0x88,
+    [TYPE_MYSTERY]  = 0xA4,
+    [TYPE_FIRE]     = 0x24,
+    [TYPE_WATER]    = 0x28,
+    [TYPE_GRASS]    = 0x2C,
+    [TYPE_ELECTRIC] = 0x40,
+    [TYPE_PSYCHIC]  = 0x84,
+    [TYPE_ICE]      = 0x4C,
+    [TYPE_DRAGON]   = 0xA0,
+    [TYPE_DARK]     = 0x8C,
+    [TYPE_FAIRY]    = 0x04,
+};
+
+static void CopyTypeIconTilesToVram(u32 destTileNum, u8 type)
+{
+    u32 offset;
+    u8 *dest;
+    const u8 *src;
+
+    if (type >= NUMBER_OF_MON_TYPES)
+        type = TYPE_MYSTERY;
+
+    offset = sTypeToMenuInfoTileOffset[type];
+    dest = (u8 *)(OBJ_VRAM0 + destTileNum * TILE_SIZE_4BPP);
+    src = gMenuInfoElements_Gfx + offset * TILE_SIZE_4BPP;
+
+    // Top 4 tiles (32x8)
+    CpuCopy32(src, dest, 4 * TILE_SIZE_4BPP);
+    // Bottom 4 tiles (32x8, row is 16 tiles down in 128px menu_info)
+    CpuCopy32(src + 16 * TILE_SIZE_4BPP, dest + 4 * TILE_SIZE_4BPP, 4 * TILE_SIZE_4BPP);
+}
+
+static void SpriteCB_HealthBoxTypeIcon(struct Sprite *sprite)
+{
+    u8 healthboxSpriteId = sprite->sTypeIconHealthboxSpriteId;
+    s16 xOffset = 0;
+    s16 yOffset = -12;
+
+    if (GetBattlerSide(sprite->sTypeIconBattlerId) != B_SIDE_PLAYER)
+    {
+        if (sprite->sTypeIconIsDual)
+            xOffset = (sprite->sTypeIconSlot == 0) ? 4 : 38;
+        else
+            xOffset = 4;
+    }
+    else
+    {
+        if (sprite->sTypeIconIsDual)
+            xOffset = (sprite->sTypeIconSlot == 0) ? 8 : 42;
+        else
+            xOffset = 20;
+    }
+
+    sprite->x = gSprites[healthboxSpriteId].x + xOffset;
+    sprite->y = gSprites[healthboxSpriteId].y + yOffset;
+    sprite->x2 = gSprites[healthboxSpriteId].x2;
+    sprite->y2 = gSprites[healthboxSpriteId].y2;
+}
+
 enum
 {
     HEALTHBAR_TYPE_PLAYER_SINGLE,
@@ -609,6 +770,27 @@ u8 CreateBattlerHealthboxSprites(u8 battlerId)
     healthbarSprite->sHealthbarType = healthbarType;
     healthbarSprite->invisible = TRUE;
 
+    {
+        u8 pos = gBattlerPositions[battlerId];
+        u8 type1SpriteId = CreateSpriteAtEnd(&sHealthboxTypeIconSpriteTemplates[pos][0], 240, 160, 1);
+        u8 type2SpriteId = CreateSpriteAtEnd(&sHealthboxTypeIconSpriteTemplates[pos][1], 240, 160, 1);
+
+        gSprites[type1SpriteId].sTypeIconHealthboxSpriteId = healthboxSpriteId;
+        gSprites[type1SpriteId].sTypeIconBattlerId = battlerId;
+        gSprites[type1SpriteId].sTypeIconSlot = 0;
+        gSprites[type1SpriteId].sTypeIconIsDual = FALSE;
+        gSprites[type1SpriteId].invisible = TRUE;
+
+        gSprites[type2SpriteId].sTypeIconHealthboxSpriteId = healthboxSpriteId;
+        gSprites[type2SpriteId].sTypeIconBattlerId = battlerId;
+        gSprites[type2SpriteId].sTypeIconSlot = 1;
+        gSprites[type2SpriteId].sTypeIconIsDual = FALSE;
+        gSprites[type2SpriteId].invisible = TRUE;
+
+        sHealthboxTypeIconSpriteIds[battlerId][0] = type1SpriteId;
+        sHealthboxTypeIconSpriteIds[battlerId][1] = type2SpriteId;
+    }
+
     return healthboxSpriteId;
 }
 
@@ -623,6 +805,8 @@ u8 CreateSafariPlayerHealthboxSprites(void)
     gSprites[healthboxSpriteId].sHealthboxOtherSpriteId = healthboxOtherSpriteId;
     gSprites[healthboxOtherSpriteId].sHealthboxSpriteId = healthboxSpriteId;
     gSprites[healthboxOtherSpriteId].callback = SpriteCB_HealthBoxOther;
+    sHealthboxTypeIconSpriteIds[0][0] = SPRITE_NONE;
+    sHealthboxTypeIconSpriteIds[0][1] = SPRITE_NONE;
     return healthboxSpriteId;
 }
 
@@ -678,16 +862,39 @@ void SetBattleBarStruct(u8 battlerId, u8 healthboxSpriteId, s32 maxVal, s32 oldV
 
 void SetHealthboxSpriteInvisible(u8 healthboxSpriteId)
 {
+    u8 battlerId = gSprites[healthboxSpriteId].sBattlerId;
+
     gSprites[healthboxSpriteId].invisible = TRUE;
     gSprites[gSprites[healthboxSpriteId].sHealthBarSpriteId].invisible = TRUE;
     gSprites[gSprites[healthboxSpriteId].sHealthboxOtherSpriteId].invisible = TRUE;
+
+    if (battlerId < MAX_BATTLERS_COUNT)
+    {
+        if (sHealthboxTypeIconSpriteIds[battlerId][0] != SPRITE_NONE)
+            gSprites[sHealthboxTypeIconSpriteIds[battlerId][0]].invisible = TRUE;
+        if (sHealthboxTypeIconSpriteIds[battlerId][1] != SPRITE_NONE)
+            gSprites[sHealthboxTypeIconSpriteIds[battlerId][1]].invisible = TRUE;
+    }
 }
 
 void SetHealthboxSpriteVisible(u8 healthboxSpriteId)
 {
+    u8 battlerId = gSprites[healthboxSpriteId].sBattlerId;
+
     gSprites[healthboxSpriteId].invisible = FALSE;
     gSprites[gSprites[healthboxSpriteId].sHealthBarSpriteId].invisible = FALSE;
     gSprites[gSprites[healthboxSpriteId].sHealthboxOtherSpriteId].invisible = FALSE;
+
+    if (battlerId < MAX_BATTLERS_COUNT && !(gBattleTypeFlags & BATTLE_TYPE_SAFARI && battlerId == 0))
+    {
+        if (sHealthboxTypeIconSpriteIds[battlerId][0] != SPRITE_NONE)
+            gSprites[sHealthboxTypeIconSpriteIds[battlerId][0]].invisible = FALSE;
+        if (sHealthboxTypeIconSpriteIds[battlerId][1] != SPRITE_NONE)
+        {
+            if (gSprites[sHealthboxTypeIconSpriteIds[battlerId][1]].sTypeIconIsDual)
+                gSprites[sHealthboxTypeIconSpriteIds[battlerId][1]].invisible = FALSE;
+        }
+    }
 }
 
 static void UpdateSpritePos(u8 spriteId, s16 x, s16 y)
@@ -698,6 +905,22 @@ static void UpdateSpritePos(u8 spriteId, s16 x, s16 y)
 
 void DestoryHealthboxSprite(u8 healthboxSpriteId)
 {
+    u8 battlerId = gSprites[healthboxSpriteId].sBattlerId;
+
+    if (battlerId < MAX_BATTLERS_COUNT)
+    {
+        if (sHealthboxTypeIconSpriteIds[battlerId][0] != SPRITE_NONE)
+        {
+            DestroySprite(&gSprites[sHealthboxTypeIconSpriteIds[battlerId][0]]);
+            sHealthboxTypeIconSpriteIds[battlerId][0] = SPRITE_NONE;
+        }
+        if (sHealthboxTypeIconSpriteIds[battlerId][1] != SPRITE_NONE)
+        {
+            DestroySprite(&gSprites[sHealthboxTypeIconSpriteIds[battlerId][1]]);
+            sHealthboxTypeIconSpriteIds[battlerId][1] = SPRITE_NONE;
+        }
+    }
+
     DestroySprite(&gSprites[gSprites[healthboxSpriteId].sHealthboxOtherSpriteId]);
     DestroySprite(&gSprites[gSprites[healthboxSpriteId].sHealthBarSpriteId]);
     DestroySprite(&gSprites[healthboxSpriteId]);
@@ -720,6 +943,11 @@ void UpdateOamPriorityInAllHealthboxes(u8 priority)
         gSprites[healthboxSpriteId].oam.priority = priority;
         gSprites[healthboxOtherSpriteId].oam.priority = priority;
         gSprites[healthbarSpriteId].oam.priority = priority;
+
+        if (sHealthboxTypeIconSpriteIds[i][0] != SPRITE_NONE)
+            gSprites[sHealthboxTypeIconSpriteIds[i][0]].oam.priority = priority;
+        if (sHealthboxTypeIconSpriteIds[i][1] != SPRITE_NONE)
+            gSprites[sHealthboxTypeIconSpriteIds[i][1]].oam.priority = priority;
     }
 }
 
@@ -1838,6 +2066,80 @@ void UpdateHealthboxAttribute(u8 healthboxSpriteId, struct Pokemon *mon, u8 elem
             UpdateNickInHealthbox(healthboxSpriteId, mon);
         if (elementId == HEALTHBOX_STATUS_ICON || elementId == HEALTHBOX_ALL)
             UpdateStatusIconInHealthbox(healthboxSpriteId);
+    }
+
+    if (elementId == HEALTHBOX_ALL || elementId == HEALTHBOX_NICK)
+        UpdateHealthboxTypeIcons(healthboxSpriteId, mon);
+}
+
+static void UpdateHealthboxTypeIcons(u8 healthboxSpriteId, struct Pokemon *mon)
+{
+    u8 battlerId = gSprites[healthboxSpriteId].sBattlerId;
+    u8 type1, type2;
+    u8 sprite1Id, sprite2Id;
+    bool8 isDual;
+
+    if (battlerId >= MAX_BATTLERS_COUNT)
+        return;
+
+    if ((gBattleTypeFlags & BATTLE_TYPE_SAFARI) && battlerId == 0)
+        return;
+
+    sprite1Id = sHealthboxTypeIconSpriteIds[battlerId][0];
+    sprite2Id = sHealthboxTypeIconSpriteIds[battlerId][1];
+
+    if (sprite1Id == SPRITE_NONE || sprite2Id == SPRITE_NONE)
+        return;
+
+    if (gBattleMons[battlerId].species != SPECIES_NONE && gBattleMons[battlerId].type1 != TYPE_NONE)
+    {
+        type1 = gBattleMons[battlerId].type1;
+        type2 = gBattleMons[battlerId].type2;
+    }
+    else
+    {
+        u16 species = GetMonData(mon, MON_DATA_SPECIES);
+        type1 = gSpeciesInfo[species].types[0];
+        type2 = gSpeciesInfo[species].types[1];
+    }
+
+    isDual = (type1 != type2);
+
+    gSprites[sprite1Id].sTypeIconIsDual = isDual;
+    gSprites[sprite2Id].sTypeIconIsDual = isDual;
+
+    CopyTypeIconTilesToVram(gSprites[sprite1Id].oam.tileNum, type1);
+    if (isDual)
+        CopyTypeIconTilesToVram(gSprites[sprite2Id].oam.tileNum, type2);
+
+    if (!gSprites[healthboxSpriteId].invisible)
+    {
+        gSprites[sprite1Id].invisible = FALSE;
+        gSprites[sprite2Id].invisible = !isDual;
+    }
+}
+
+void ClearHealthboxTypeIcons(void)
+{
+    u8 i;
+    for (i = 0; i < MAX_BATTLERS_COUNT; i++)
+    {
+        sHealthboxTypeIconSpriteIds[i][0] = SPRITE_NONE;
+        sHealthboxTypeIconSpriteIds[i][1] = SPRITE_NONE;
+    }
+}
+
+void UpdateBattlerHealthboxTypeIcons(u8 battlerId)
+{
+    if (battlerId < MAX_BATTLERS_COUNT && gHealthboxSpriteIds[battlerId] != 0)
+    {
+        struct Pokemon *party;
+        if (GetBattlerSide(battlerId) == B_SIDE_PLAYER)
+            party = gPlayerParty;
+        else
+            party = gEnemyParty;
+
+        UpdateHealthboxTypeIcons(gHealthboxSpriteIds[battlerId], &party[gBattlerPartyIndexes[battlerId]]);
     }
 }
 

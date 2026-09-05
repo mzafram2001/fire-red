@@ -51,6 +51,16 @@ enum
 #define TAG_HEALTHBOX_PAL                       TAG_HEALTHBOX_PLAYER1_TILE
 #define TAG_HEALTHBAR_PAL                       TAG_HEALTHBAR_PLAYER1_TILE
 
+#define TAG_HEALTHBOX_TYPE_ICON_P1_T1_TILE      55062
+#define TAG_HEALTHBOX_TYPE_ICON_P1_T2_TILE      55063
+#define TAG_HEALTHBOX_TYPE_ICON_O1_T1_TILE      55064
+#define TAG_HEALTHBOX_TYPE_ICON_O1_T2_TILE      55065
+#define TAG_HEALTHBOX_TYPE_ICON_P2_T1_TILE      55066
+#define TAG_HEALTHBOX_TYPE_ICON_P2_T2_TILE      55067
+#define TAG_HEALTHBOX_TYPE_ICON_O2_T1_TILE      55068
+#define TAG_HEALTHBOX_TYPE_ICON_O2_T2_TILE      55069
+#define TAG_HEALTHBOX_TYPE_ICONS_PAL             55070
+
 enum
 {
     HEALTHBOX_ALL,
@@ -86,5 +96,7 @@ u8 GetHPBarLevel(s16 hp, s16 maxhp);
 void UpdateNickInHealthbox(u8 spriteId, struct Pokemon *mon);
 void TryAddPokeballIconToHealthbox(u8 spriteId, u8);
 s32 MoveBattleBar(u8 battler, u8 healthboxSpriteId, u8 whichBar, u8 arg3);
+void ClearHealthboxTypeIcons(void);
+void UpdateBattlerHealthboxTypeIcons(u8 battlerId);
 
 #endif // GUARD_BATTLE_INTERFACE_H

@@ -95,7 +95,7 @@ static const struct CompressedSpriteSheet sSpriteSheets_HealthBar[MAX_BATTLERS_C
     },
 };
 
-static const struct SpritePalette sSpritePalettes_HealthBoxHealthBar[2] =
+static const struct SpritePalette sSpritePalettes_HealthBoxHealthBar[3] =
 {
     {
         .data = gBattleInterface_Healthbox_Pal,
@@ -105,6 +105,30 @@ static const struct SpritePalette sSpritePalettes_HealthBoxHealthBar[2] =
         .data = gBattleInterface_Healthbar_Pal,
         .tag = TAG_HEALTHBAR_PAL,
     },
+    {
+        .data = gMenuInfoElements2_Pal,
+        .tag = TAG_HEALTHBOX_TYPE_ICONS_PAL,
+    },
+};
+
+static const struct CompressedSpriteSheet sSpriteSheets_HealthboxTypeIcons[MAX_BATTLERS_COUNT][2] =
+{
+    [0] = {
+        { .data = gBlankGfxCompressed, .size = 0x100, .tag = TAG_HEALTHBOX_TYPE_ICON_P1_T1_TILE },
+        { .data = gBlankGfxCompressed, .size = 0x100, .tag = TAG_HEALTHBOX_TYPE_ICON_P1_T2_TILE },
+    },
+    [1] = {
+        { .data = gBlankGfxCompressed, .size = 0x100, .tag = TAG_HEALTHBOX_TYPE_ICON_O1_T1_TILE },
+        { .data = gBlankGfxCompressed, .size = 0x100, .tag = TAG_HEALTHBOX_TYPE_ICON_O1_T2_TILE },
+    },
+    [2] = {
+        { .data = gBlankGfxCompressed, .size = 0x100, .tag = TAG_HEALTHBOX_TYPE_ICON_P2_T1_TILE },
+        { .data = gBlankGfxCompressed, .size = 0x100, .tag = TAG_HEALTHBOX_TYPE_ICON_P2_T2_TILE },
+    },
+    [3] = {
+        { .data = gBlankGfxCompressed, .size = 0x100, .tag = TAG_HEALTHBOX_TYPE_ICON_O2_T1_TILE },
+        { .data = gBlankGfxCompressed, .size = 0x100, .tag = TAG_HEALTHBOX_TYPE_ICON_O2_T2_TILE },
+    }
 };
 
 void AllocateBattleSpritesData(void)
@@ -470,6 +494,7 @@ static void BattleLoadAllHealthBoxesGfxAtOnce(void)
 
     LoadSpritePalette(&sSpritePalettes_HealthBoxHealthBar[0]);
     LoadSpritePalette(&sSpritePalettes_HealthBoxHealthBar[1]);
+    LoadSpritePalette(&sSpritePalettes_HealthBoxHealthBar[2]);
     if (!IsDoubleBattle())
     {
         LoadCompressedSpriteSheetUsingHeap(&sSpriteSheet_SinglesPlayerHealthbox);
@@ -485,7 +510,11 @@ static void BattleLoadAllHealthBoxesGfxAtOnce(void)
         numberOfBattlers = MAX_BATTLERS_COUNT;
     }
     for (i = 0; i < numberOfBattlers; ++i)
+    {
         LoadCompressedSpriteSheetUsingHeap(&sSpriteSheets_HealthBar[gBattlerPositions[i]]);
+        LoadCompressedSpriteSheetUsingHeap(&sSpriteSheets_HealthboxTypeIcons[gBattlerPositions[i]][0]);
+        LoadCompressedSpriteSheetUsingHeap(&sSpriteSheets_HealthboxTypeIcons[gBattlerPositions[i]][1]);
+    }
 }
 
 bool8 BattleLoadAllHealthBoxesGfx(u8 state)
@@ -498,6 +527,7 @@ bool8 BattleLoadAllHealthBoxesGfx(u8 state)
         {
             LoadSpritePalette(&sSpritePalettes_HealthBoxHealthBar[0]);
             LoadSpritePalette(&sSpritePalettes_HealthBoxHealthBar[1]);
+            LoadSpritePalette(&sSpritePalettes_HealthBoxHealthBar[2]);
         }
         else if (!IsDoubleBattle())
         {
@@ -511,9 +541,17 @@ bool8 BattleLoadAllHealthBoxesGfx(u8 state)
             else if (state == 3)
                 LoadCompressedSpriteSheetUsingHeap(&sSpriteSheet_SinglesOpponentHealthbox);
             else if (state == 4)
+            {
                 LoadCompressedSpriteSheetUsingHeap(&sSpriteSheets_HealthBar[gBattlerPositions[0]]);
+                LoadCompressedSpriteSheetUsingHeap(&sSpriteSheets_HealthboxTypeIcons[gBattlerPositions[0]][0]);
+                LoadCompressedSpriteSheetUsingHeap(&sSpriteSheets_HealthboxTypeIcons[gBattlerPositions[0]][1]);
+            }
             else if (state == 5)
+            {
                 LoadCompressedSpriteSheetUsingHeap(&sSpriteSheets_HealthBar[gBattlerPositions[1]]);
+                LoadCompressedSpriteSheetUsingHeap(&sSpriteSheets_HealthboxTypeIcons[gBattlerPositions[1]][0]);
+                LoadCompressedSpriteSheetUsingHeap(&sSpriteSheets_HealthboxTypeIcons[gBattlerPositions[1]][1]);
+            }
             else
                 retVal = TRUE;
         }
@@ -528,13 +566,29 @@ bool8 BattleLoadAllHealthBoxesGfx(u8 state)
             else if (state == 5)
                 LoadCompressedSpriteSheetUsingHeap(&sSpriteSheets_DoublesOpponentHealthbox[1]);
             else if (state == 6)
+            {
                 LoadCompressedSpriteSheetUsingHeap(&sSpriteSheets_HealthBar[gBattlerPositions[0]]);
+                LoadCompressedSpriteSheetUsingHeap(&sSpriteSheets_HealthboxTypeIcons[gBattlerPositions[0]][0]);
+                LoadCompressedSpriteSheetUsingHeap(&sSpriteSheets_HealthboxTypeIcons[gBattlerPositions[0]][1]);
+            }
             else if (state == 7)
+            {
                 LoadCompressedSpriteSheetUsingHeap(&sSpriteSheets_HealthBar[gBattlerPositions[1]]);
+                LoadCompressedSpriteSheetUsingHeap(&sSpriteSheets_HealthboxTypeIcons[gBattlerPositions[1]][0]);
+                LoadCompressedSpriteSheetUsingHeap(&sSpriteSheets_HealthboxTypeIcons[gBattlerPositions[1]][1]);
+            }
             else if (state == 8)
+            {
                 LoadCompressedSpriteSheetUsingHeap(&sSpriteSheets_HealthBar[gBattlerPositions[2]]);
+                LoadCompressedSpriteSheetUsingHeap(&sSpriteSheets_HealthboxTypeIcons[gBattlerPositions[2]][0]);
+                LoadCompressedSpriteSheetUsingHeap(&sSpriteSheets_HealthboxTypeIcons[gBattlerPositions[2]][1]);
+            }
             else if (state == 9)
+            {
                 LoadCompressedSpriteSheetUsingHeap(&sSpriteSheets_HealthBar[gBattlerPositions[3]]);
+                LoadCompressedSpriteSheetUsingHeap(&sSpriteSheets_HealthboxTypeIcons[gBattlerPositions[3]][0]);
+                LoadCompressedSpriteSheetUsingHeap(&sSpriteSheets_HealthboxTypeIcons[gBattlerPositions[3]][1]);
+            }
             else
                 retVal = TRUE;
         }
@@ -627,6 +681,7 @@ bool8 BattleInitAllSprites(u8 *state, u8 *battlerId)
 
 void ClearSpritesHealthboxAnimData(void)
 {
+    ClearHealthboxTypeIcons();
     memset(gBattleSpritesDataPtr->healthBoxesData, 0, sizeof(struct BattleHealthboxInfo) * MAX_BATTLERS_COUNT);
     memset(gBattleSpritesDataPtr->animationData, 0, sizeof(struct BattleAnimationInfo));
 }

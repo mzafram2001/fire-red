@@ -30,6 +30,10 @@ An enhanced and modernized decompilation of **Pokémon FireRed** based on [pret/
   * Custom pastel-pink Fairy badge icon seamlessly integrated into battle menus and summary screens.
 * **Modern Shiny Rate (1/4096):**
   * Upgraded base shiny encounter probability from the classic 1/8192 to the modern Gen 6+ standard of **1/4096** (`SHINY_ODDS = 16/65536`) for wild encounters, gifts, and breeding.
+* **Battle Healthbox Type Icons (CFRU-Style):**
+  * Displays dynamic type badges directly above each active Pokémon's health box (showing Primary & Secondary types for dual-type species, or a single centered badge for pure types).
+  * Smoothly synchronized with healthbox entry/exit slide animations and visibility during move attacks.
+  * Real-time dynamic updates if a Pokémon changes typing mid-battle (Conversion, Color Change, Transform, etc.).
 
 ---
 
