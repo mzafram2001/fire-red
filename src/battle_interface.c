@@ -623,38 +623,51 @@ static const struct SpriteTemplate sHealthboxTypeIconSpriteTemplates[MAX_BATTLER
     },
 };
 
-static const u8 sTypeToColorIndex[NUMBER_OF_MON_TYPES] = {
-    [TYPE_NORMAL]   = 9,   // #A8A878 (tan/beige)
-    [TYPE_FIGHTING] = 1,   // #E83000 (red)
-    [TYPE_FLYING]   = 7,   // #6890F0 (blue)
-    [TYPE_POISON]   = 8,   // #A040A0 (purple)
-    [TYPE_GROUND]   = 2,   // #F08030 (orange-brown)
-    [TYPE_ROCK]     = 11,  // #B8A038 (rock tan)
-    [TYPE_BUG]      = 4,   // #D8E030 (lime)
-    [TYPE_GHOST]    = 8,   // #A040A0 (purple)
-    [TYPE_STEEL]    = 13,  // #507888 (steel slate)
-    [TYPE_MYSTERY]  = 14,  // #404040 (charcoal)
-    [TYPE_FIRE]     = 1,   // #E83000 (red)
-    [TYPE_WATER]    = 7,   // #6890F0 (water blue)
-    [TYPE_GRASS]    = 5,   // #78C850 (green)
-    [TYPE_ELECTRIC] = 3,   // #F8B010 (yellow)
-    [TYPE_PSYCHIC]  = 12,  // #F85888 (magenta-pink)
-    [TYPE_ICE]      = 6,   // #98D8D8 (cyan)
-    [TYPE_DRAGON]   = 1,   // #E83000 (dragon red/indigo)
-    [TYPE_DARK]     = 14,  // #404040 (dark)
-    [TYPE_FAIRY]    = 10,  // #F890C0 (pastel pink)
+struct TypeIconColors
+{
+    u8 top;
+    u8 bot;
+};
+
+// Colors directly sampled from the summary screen type badges (graphics/interface/menu_info.4bpp)
+// and palette (gMenuInfoElements2_Pal):
+//   1: Crimson Red   2: Flame Orange   3: Amber Yellow   4: Lime Green
+//   5: Leaf Green    6: Sky Blue/Ice   7: Royal Blue     8: Purple
+//   9: Tan/Beige    10: Pastel Pink   11: Rock Brown    12: Magenta Pink
+//  13: Dark Slate   14: Dark Outline  15: White Highlight
+static const struct TypeIconColors sTypeColors[NUMBER_OF_MON_TYPES] = {
+    [TYPE_NORMAL]   = { 9,  9 },  // Tan
+    [TYPE_FIGHTING] = { 1,  1 },  // Crimson Red
+    [TYPE_FLYING]   = { 6,  9 },  // Sky Blue top, Tan bottom (summary split)
+    [TYPE_POISON]   = { 12, 8 },  // Magenta top, Purple bottom (summary split)
+    [TYPE_GROUND]   = { 4,  11 }, // Sand top, Earth Brown bottom (summary split)
+    [TYPE_ROCK]     = { 11, 11 }, // Solid Earth Brown
+    [TYPE_BUG]      = { 4,  4 },  // Solid Lime Green
+    [TYPE_GHOST]    = { 8,  8 },  // Solid Deep Purple
+    [TYPE_STEEL]    = { 9,  13 }, // Steel Silver top, Slate bottom (summary split)
+    [TYPE_MYSTERY]  = { 6,  12 }, // Cyan top, Pink bottom
+    [TYPE_FIRE]     = { 2,  2 },  // Solid Flame Orange
+    [TYPE_WATER]    = { 7,  7 },  // Solid Royal Blue
+    [TYPE_GRASS]    = { 5,  5 },  // Solid Leaf Green
+    [TYPE_ELECTRIC] = { 3,  3 },  // Solid Amber Yellow
+    [TYPE_PSYCHIC]  = { 12, 12 }, // Solid Magenta Pink
+    [TYPE_ICE]      = { 6,  6 },  // Solid Frost Cyan
+    [TYPE_DRAGON]   = { 7,  1 },  // Royal Blue top, Red bottom (summary split)
+    [TYPE_DARK]     = { 13, 13 }, // Solid Dark Slate
+    [TYPE_FAIRY]    = { 10, 10 }, // Solid Pastel Pink
 };
 
 static void GenerateTypeIconTile(u32 destTileNum, u8 type)
 {
-    u8 color;
+    u8 cTop, cBot;
     u8 tile[32];
     int y;
 
     if (type >= NUMBER_OF_MON_TYPES)
         type = TYPE_MYSTERY;
 
-    color = sTypeToColorIndex[type];
+    cTop = sTypeColors[type].top;
+    cBot = sTypeColors[type].bot;
 
     // Row 0: . X X X X X X .
     tile[0] = 0x00 | (14 << 4);
@@ -662,25 +675,31 @@ static void GenerateTypeIconTile(u32 destTileNum, u8 type)
     tile[2] = 14 | (14 << 4);
     tile[3] = 14 | (0 << 4);
 
-    // Row 1: X H H C C C X X (14, 15, 15, C, C, C, 14, 14)
+    // Row 1: X H H T T T X X (14, 15, 15, cTop, cTop, cTop, 14, 14)
     tile[4] = 14 | (15 << 4);
-    tile[5] = 15 | (color << 4);
-    tile[6] = color | (color << 4);
+    tile[5] = 15 | (cTop << 4);
+    tile[6] = cTop | (cTop << 4);
     tile[7] = 14 | (14 << 4);
 
-    // Row 2: X H C C C C C X (14, 15, C, C, C, C, C, 14)
+    // Row 2: X H T T T T T X (14, 15, cTop, cTop, cTop, cTop, cTop, 14)
     tile[8] = 14 | (15 << 4);
-    tile[9] = color | (color << 4);
-    tile[10] = color | (color << 4);
-    tile[11] = color | (14 << 4);
+    tile[9] = cTop | (cTop << 4);
+    tile[10] = cTop | (cTop << 4);
+    tile[11] = cTop | (14 << 4);
 
-    // Rows 3..6: X C C C C C C X (14, C, C, C, C, C, C, 14)
-    for (y = 3; y <= 6; y++)
+    // Row 3: X T T T T T T X (14, cTop, cTop, cTop, cTop, cTop, cTop, 14)
+    tile[12] = 14 | (cTop << 4);
+    tile[13] = cTop | (cTop << 4);
+    tile[14] = cTop | (cTop << 4);
+    tile[15] = cTop | (14 << 4);
+
+    // Rows 4..6: X B B B B B B X (14, cBot, cBot, cBot, cBot, cBot, cBot, 14)
+    for (y = 4; y <= 6; y++)
     {
-        tile[y * 4 + 0] = 14 | (color << 4);
-        tile[y * 4 + 1] = color | (color << 4);
-        tile[y * 4 + 2] = color | (color << 4);
-        tile[y * 4 + 3] = color | (14 << 4);
+        tile[y * 4 + 0] = 14 | (cBot << 4);
+        tile[y * 4 + 1] = cBot | (cBot << 4);
+        tile[y * 4 + 2] = cBot | (cBot << 4);
+        tile[y * 4 + 3] = cBot | (14 << 4);
     }
 
     // Row 7: . X X X X X X .
