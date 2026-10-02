@@ -22,7 +22,7 @@ An enhanced and modernized decompilation of **Pokémon FireRed** based on [pret/
 ### ⚔️ Battle Mechanics & Typing
 * **Physical / Special / Status Split:**
   * Moves are categorized individually as **Physical**, **Special**, or **Status** regardless of their elemental type (Gen 4+ battle mechanics).
-  * Category icons are displayed directly in the move info panel within the Pokémon summary screen.
+  * Category text labels are displayed directly in the move info panel within the Pokémon summary screen with clear color-coding (Physical in orange-red, Special in blue, and Status in dark grey).
 * **Fairy-Type Integration (Gen 6+):**
   * Full Gen 6 type matchup table implemented (weaknesses, resistances, and immunities).
   * Existing Pokémon retroactively updated to Fairy or dual Fairy-type (e.g., Clefairy line, Jigglypuff line, Mr. Mime, Togepi line, Marill line, Snubbull line, Ralts/Kirlia/Gardevoir, etc.).

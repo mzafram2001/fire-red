@@ -879,7 +879,7 @@ static const struct WindowTemplate sWindowTemplates_Moves[] =
         .tilemapTop = 2,
         .width = 5,
         .height = 18,
-        .paletteNum = 6,
+        .paletteNum = 9,
         .baseBlock = 0x0178
     },
     [POKESUM_WIN_MOVES_6 - 3] = {
@@ -2083,6 +2083,7 @@ static u8 PokeSum_HandleLoadBgGfx(void)
         break;
     case 1:
         ListMenuLoadStdPalAt(BG_PLTT_ID(6), 1);
+        ListMenuLoadStdPalAt(BG_PLTT_ID(9), 1);
         LoadPalette(sTextHeaderPalette, BG_PLTT_ID(7), PLTT_SIZE_4BPP);
         {
             static const u16 sStatRedPalette[2] = {
@@ -3038,13 +3039,13 @@ static void PokeSum_DrawMoveTypeIcons(void)
         if (sMonSummaryScreen->moveIds[i] == MOVE_NONE)
             continue;
 
-        LoadPalette(&gTypeColors[sMonSummaryScreen->moveTypes[i]], BG_PLTT_ID(6) + 1 + i, sizeof(u16));
+        LoadPalette(&gTypeColors[sMonSummaryScreen->moveTypes[i]], BG_PLTT_ID(9) + 1 + i, sizeof(u16));
         BlitMenuInfoIconWithColor(sMonSummaryScreen->windowIds[5], sMonSummaryScreen->moveTypes[i] + 1, 3, GetMoveNamePrinterYpos(i), 1 + i);
     }
 
     if (sMonSummaryScreen->mode == PSS_MODE_SELECT_MOVE)
     {
-        LoadPalette(&gTypeColors[sMonSummaryScreen->moveTypes[4]], BG_PLTT_ID(6) + 5, sizeof(u16));
+        LoadPalette(&gTypeColors[sMonSummaryScreen->moveTypes[4]], BG_PLTT_ID(9) + 5, sizeof(u16));
         BlitMenuInfoIconWithColor(sMonSummaryScreen->windowIds[5], sMonSummaryScreen->moveTypes[4] + 1, 3, GetMoveNamePrinterYpos(4), 5);
     }
 }

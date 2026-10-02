@@ -355,6 +355,9 @@ const u8 gMoveDescription_ShockWave[] = _("A rapid jolt of\nelectricity strikes\
 const u8 gMoveDescription_WaterPulse[] = _("An attack with a\npulsing blast of\nwater. It may also\nconfuse the foe.");
 const u8 gMoveDescription_DoomDesire[] = _("A move that attacks\nthe foe with a\nblast of light two\nturns after use.");
 const u8 gMoveDescription_PsychoBoost[] = _("An intense attack\nthat also sharply\nreduces the user's\nSP. ATK stat.");
+const u8 gMoveDescription_DisarmingVoice[] = _("A charming cry that\ndeals emotional\nhurt. This attack\nnever misses.");
+const u8 gMoveDescription_DrainingKiss[] = _("An energy-draining\nkiss. The user\nrecovers half the\ndamage dealt.");
+const u8 gMoveDescription_DazzlingGleam[] = _("The user dazzles\nfoes with a bright\nflash of light to\ndeal damage.");
 
 const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] = {
     [MOVE_POUND         - 1] = gMoveDescription_Pound,
@@ -711,4 +714,7 @@ const u8 *const gMoveDescriptionPointers[MOVES_COUNT - 1] = {
     [MOVE_WATER_PULSE   - 1] = gMoveDescription_WaterPulse,
     [MOVE_DOOM_DESIRE   - 1] = gMoveDescription_DoomDesire,
     [MOVE_PSYCHO_BOOST  - 1] = gMoveDescription_PsychoBoost,
+    [MOVE_DISARMING_VOICE - 1] = gMoveDescription_DisarmingVoice,
+    [MOVE_DRAINING_KISS - 1] = gMoveDescription_DrainingKiss,
+    [MOVE_DAZZLING_GLEAM - 1] = gMoveDescription_DazzlingGleam,
 };

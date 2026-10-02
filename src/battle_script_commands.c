@@ -7439,6 +7439,7 @@ static void Cmd_transformdataexecution(void)
         }
 
         gActiveBattler = gBattlerAttacker;
+        UpdateBattlerHealthboxTypeIcons(gBattlerAttacker);
         BtlController_EmitResetActionMoveSelection(BUFFER_A, RESET_MOVE_SELECTION);
         MarkBattlerForControllerExec(gActiveBattler);
         gBattleCommunication[MULTISTRING_CHOOSER] = B_MSG_TRANSFORMED;
