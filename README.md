@@ -28,7 +28,7 @@ An enhanced and modernized decompilation of **Pokémon FireRed** based on [pret/
 * **Fairy-Type Integration (Gen 6+):**
   * Full Gen 6 type matchup table implemented (weaknesses, resistances, and immunities).
   * Existing Pokémon retroactively updated to Fairy or dual Fairy-type (e.g., Clefairy line, Jigglypuff line, Mr. Mime, Togepi line, Marill line, Snubbull line, Ralts/Kirlia/Gardevoir, etc.).
-  * Fairy-type moves included and integrated (Disarming Voice, Draining Kiss, Dazzling Gleam, etc.).
+  * Fairy-type moves included and integrated via level-up learnsets and TMs (**TM09 Disarming Voice**, **TM48 Draining Kiss**, and **TM49 Dazzling Gleam**).
   * Custom pastel-pink Fairy badge icon seamlessly integrated into battle menus and summary screens.
 * **Modern Shiny Rate (1/4096):**
   * Upgraded base shiny encounter probability from the classic 1/8192 to the modern Gen 6+ standard of **1/4096** (`SHINY_ODDS = 16/65536`) for wild encounters, gifts, and breeding.
@@ -80,7 +80,10 @@ An enhanced and modernized decompilation of **Pokémon FireRed** based on [pret/
     * Clamperl ➔ Gorebyss *(Level up holding Deep Sea Scale)*
     * Feebas ➔ Milotic *(Level up holding Heart Scale)*
 * **All Evolutionary Items Available:** Celadon Department Store (4F) now stocks all evolutionary stones, trade hold items, Heart Scales, and baby incenses (Moon Stone, Sun Stone, King's Rock, Metal Coat, Dragon Scale, Up-Grade, Deep Sea Tooth, Deep Sea Scale, Heart Scale, Sea & Lax Incense) for full solo Pokédex completion.
-* **Complete TM Accessibility (50/50):** Added **TM10 (Hidden Power)** to the Celadon Department Store (2F) TM counter, resolving the classic vanilla oversight where TM10 was exclusively locked behind low-probability Pickup ability grinding.
+* **Complete TM Accessibility (50/50) & Fairy TMs:**
+  * Added **TM10 (Hidden Power)**, **TM48 (Draining Kiss)**, and **TM49 (Dazzling Gleam)** to the Celadon Department Store (2F) TM counter.
+  * **TM09 (Disarming Voice)** is obtained early in Mt. Moon (1F) and as a gift from the Vermilion City Pokémon Fan Club.
+  * Resolves the classic vanilla oversight where TM10 was exclusively locked behind low-probability Pickup ability grinding.
 * **Full Competitive & Type-Boosting Item Availability:** Celadon Department Store (5F) now stocks all competitive battle items (Choice Band, Leftovers, Scope Lens, Focus Band, BrightPowder, Shell Bell, White Herb, Mental Herb, Lucky Egg, Soothe Bell, Light Ball, Thick Club, Stick) and all elemental type boosters (Magnet, Charcoal, Mystic Water, Miracle Seed, etc.).
 * **Specialty Poké Balls Available:** Celadon Department Store (2F) now stocks all specialty Poké Balls (Ultra Ball, Net Ball, Nest Ball, Repeat Ball, Timer Ball, Luxury Ball).
 
