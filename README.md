@@ -78,6 +78,8 @@ An enhanced and modernized decompilation of **Pokémon FireRed** based on [pret/
     * Porygon ➔ Porygon2 *(Level up holding Up-Grade)*
     * Clamperl ➔ Huntail *(Level up holding Deep Sea Tooth)*
     * Clamperl ➔ Gorebyss *(Level up holding Deep Sea Scale)*
+    * Feebas ➔ Milotic *(Level up holding Heart Scale)*
+* **All Evolutionary Items Available:** Celadon Department Store (4F) now stocks all evolutionary stones, trade hold items, and Heart Scales (Moon Stone, Sun Stone, King's Rock, Metal Coat, Dragon Scale, Up-Grade, Deep Sea Tooth, Deep Sea Scale, Heart Scale) for full solo Pokédex completion.
 
 ---
 
