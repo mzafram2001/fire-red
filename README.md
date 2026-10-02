@@ -1,4 +1,4 @@
-# PKMN Re:Flux - An enhanced decompilation of Pokémon FireRed / LeafGreen
+# PKMN Johto Re:Flux
 
 > **Author:** [Miguel Zafra (@mzafram2001)](https://github.com/mzafram2001)
 
