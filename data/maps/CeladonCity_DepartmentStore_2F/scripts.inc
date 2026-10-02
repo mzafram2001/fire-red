@@ -58,6 +58,8 @@ CeladonCity_DepartmentStore_2F_TMs::
 	.2byte ITEM_TM31
 	.2byte ITEM_TM43
 	.2byte ITEM_TM45
+	.2byte ITEM_TM48
+	.2byte ITEM_TM49
 	.2byte ITEM_NONE
 	release
 	end
