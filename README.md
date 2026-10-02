@@ -1,4 +1,4 @@
-﻿# Pokémon FireRed - Enhanced Edition
+# PKMN Re:Flux - An enhanced decompilation of Pokémon FireRed / LeafGreen
 
 > **Author:** [Miguel Zafra (@mzafram2001)](https://github.com/mzafram2001)
 
