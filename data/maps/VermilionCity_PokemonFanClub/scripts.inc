@@ -38,7 +38,23 @@ VermilionCity_PokemonFanClub_EventScript_WorkerF::
 	lock
 	faceplayer
 	goto_if_set FLAG_SYS_GAME_CLEAR, VermilionCity_PokemonFanClub_EventScript_WorkerFGameClear
+	checkitem ITEM_TM09, 1
+	goto_if_eq VAR_RESULT, TRUE, VermilionCity_PokemonFanClub_EventScript_WorkerFAlreadyHaveTM09
+	msgbox VermilionCity_PokemonFanClub_Text_GiveTM09
+	checkitemspace ITEM_TM09
+	goto_if_eq VAR_RESULT, FALSE, VermilionCity_PokemonFanClub_EventScript_NoRoomForTM09
+	giveitem_msg VermilionCity_PokemonFanClub_Text_ReceivedTM09, ITEM_TM09
+	msgbox VermilionCity_PokemonFanClub_Text_ExplainTM09
+	release
+	end
+
+VermilionCity_PokemonFanClub_EventScript_WorkerFAlreadyHaveTM09::
 	msgbox VermilionCity_PokemonFanClub_Text_ChairmanVeryVocalAboutPokemon
+	release
+	end
+
+VermilionCity_PokemonFanClub_EventScript_NoRoomForTM09::
+	msgbox VermilionCity_PokemonFanClub_Text_MakeRoomForThis
 	release
 	end
 
