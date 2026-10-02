@@ -565,8 +565,54 @@ static void Task_UseRepel(u8 taskId)
     {
         ItemUse_SetQuestLogEvent(QL_EVENT_USED_ITEM, NULL, gSpecialVar_ItemId, 0xFFFF);
         VarSet(VAR_REPEL_STEP_COUNT, ItemId_GetHoldEffectParam(gSpecialVar_ItemId));
+        VarSet(VAR_LAST_REPEL_ITEM, gSpecialVar_ItemId);
         RemoveUsedItem();
         DisplayItemMessageInBag(taskId, FONT_NORMAL, gStringVar4, Task_ReturnToBagFromContextMenu);
+    }
+}
+
+void TrySetupAutoRepel(void)
+{
+    u16 lastRepel = VarGet(VAR_LAST_REPEL_ITEM);
+    u16 chosenItem = ITEM_NONE;
+
+    if (lastRepel == ITEM_REPEL || lastRepel == ITEM_SUPER_REPEL || lastRepel == ITEM_MAX_REPEL)
+    {
+        if (CheckBagHasItem(lastRepel, 1))
+            chosenItem = lastRepel;
+    }
+
+    if (chosenItem == ITEM_NONE)
+    {
+        if (CheckBagHasItem(ITEM_MAX_REPEL, 1))
+            chosenItem = ITEM_MAX_REPEL;
+        else if (CheckBagHasItem(ITEM_SUPER_REPEL, 1))
+            chosenItem = ITEM_SUPER_REPEL;
+        else if (CheckBagHasItem(ITEM_REPEL, 1))
+            chosenItem = ITEM_REPEL;
+    }
+
+    if (chosenItem == ITEM_NONE)
+    {
+        gSpecialVar_Result = FALSE;
+    }
+    else
+    {
+        VarSet(VAR_LAST_REPEL_ITEM, chosenItem);
+        CopyItemName(chosenItem, gStringVar1);
+        gSpecialVar_Result = TRUE;
+    }
+}
+
+void UseAutoRepel(void)
+{
+    u16 item = VarGet(VAR_LAST_REPEL_ITEM);
+    if (item != ITEM_NONE && CheckBagHasItem(item, 1))
+    {
+        VarSet(VAR_REPEL_STEP_COUNT, ItemId_GetHoldEffectParam(item));
+        RemoveBagItem(item, 1);
+        PlaySE(SE_REPEL);
+        CopyItemName(item, gStringVar1);
     }
 }
 

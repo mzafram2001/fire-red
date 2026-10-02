@@ -16,6 +16,8 @@ An enhanced and modernized decompilation of **Pokémon FireRed** based on [pret/
 * **Reusable TMs:** Technical Machines (TMs) are infinite and will not be consumed upon teaching.
 * **Forgettable HMs:** Hidden Machines (HMs) can be freely forgotten and overwritten when learning new moves without visiting the Move Deleter.
 * **Help Menu Disabled:** Removed the intrusive L/R help system menu to prevent accidental gameplay interruptions; default LR mode is activated.
+* **Auto-Repel Prompt (B2W2 Style):** When a Repel wears off in the field, a prompt asks if you want to use another one without opening your bag.
+* **Overworld Poison Survival (Gen 4+):** Pokémon survive at 1 HP from poison outside of battle; the poison fades away instead of causing the Pokémon to faint.
 
 ---
 

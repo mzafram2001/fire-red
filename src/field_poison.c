@@ -10,42 +10,7 @@
 #include "field_poison.h"
 #include "constants/battle.h"
 
-static bool32 IsMonValidSpecies(struct Pokemon *pokemon)
-{
-    u16 species = GetMonData(pokemon, MON_DATA_SPECIES_OR_EGG);
-    if (species == SPECIES_NONE || species == SPECIES_EGG)
-        return FALSE;
-    return TRUE;
-}
-
-static bool32 AllMonsFainted(void)
-{
-    int i;
-
-    struct Pokemon *pokemon = gPlayerParty;
-    for (i = 0; i < PARTY_SIZE; i++, pokemon++)
-        if (IsMonValidSpecies(pokemon) && GetMonData(pokemon, MON_DATA_HP))
-            return FALSE;
-    return TRUE;
-}
-
-static void FaintFromFieldPoison(u8 partyIdx)
-{
-    struct Pokemon *pokemon = gPlayerParty + partyIdx;
-    u32 status = STATUS1_NONE;
-    AdjustFriendship(pokemon, FRIENDSHIP_EVENT_FAINT_OUTSIDE_BATTLE);
-    SetMonData(pokemon, MON_DATA_STATUS, &status);
-    GetMonData(pokemon, MON_DATA_NICKNAME, gStringVar1);
-    StringGet_Nickname(gStringVar1);
-}
-
-static bool32 MonFaintedFromPoison(u8 partyIdx)
-{
-    struct Pokemon *pokemon = gPlayerParty + partyIdx;
-    if (IsMonValidSpecies(pokemon) && !GetMonData(pokemon, MON_DATA_HP) && GetAilmentFromStatus(GetMonData(pokemon, MON_DATA_STATUS)) == AILMENT_PSN)
-        return TRUE;
-    return FALSE;
-}
+EWRAM_DATA static u8 sPoisonSurvivedPartyMask = 0;
 
 #define tState   data[0]
 #define tPartyId data[1]
@@ -58,14 +23,18 @@ static void Task_TryFieldPoisonWhiteOut(u8 taskId)
     case 0:
         for (; tPartyId < PARTY_SIZE; tPartyId++)
         {
-            if (MonFaintedFromPoison(tPartyId))
+            if (sPoisonSurvivedPartyMask & (1 << tPartyId))
             {
-                FaintFromFieldPoison(tPartyId);
-                ShowFieldMessage(gText_PkmnFainted3);
+                struct Pokemon *pokemon = &gPlayerParty[tPartyId];
+                sPoisonSurvivedPartyMask &= ~(1 << tPartyId);
+                GetMonData(pokemon, MON_DATA_NICKNAME, gStringVar1);
+                StringGet_Nickname(gStringVar1);
+                ShowFieldMessage(gText_PkmnPoisonSurvived);
                 tState++;
                 return;
             }
         }
+        sPoisonSurvivedPartyMask = 0;
         tState = 2;
         break;
     case 1:
@@ -73,10 +42,7 @@ static void Task_TryFieldPoisonWhiteOut(u8 taskId)
             tState--;
         break;
     case 2:
-        if (AllMonsFainted())
-            gSpecialVar_Result = TRUE;
-        else
-            gSpecialVar_Result = FALSE;
+        gSpecialVar_Result = FALSE; // Pokemon never faint from field poison (Gen 4+ survival)
         ScriptContext_Enable();
         DestroyTask(taskId);
         break;
@@ -96,22 +62,33 @@ s32 DoPoisonFieldEffect(void)
     
     struct Pokemon *pokemon = gPlayerParty;
     u32 numPoisoned = 0;
-    u32 numFainted = 0;
+    u32 numSurvived = 0;
+    sPoisonSurvivedPartyMask = 0;
+
     for (i = 0; i < PARTY_SIZE; i++)
     {
         if (GetMonData(pokemon, MON_DATA_SANITY_HAS_SPECIES) && GetAilmentFromStatus(GetMonData(pokemon, MON_DATA_STATUS)) == AILMENT_PSN)
         {
             hp = GetMonData(pokemon, MON_DATA_HP);
-            if (hp == 0 || --hp == 0)
-                numFainted++;
-            SetMonData(pokemon, MON_DATA_HP, &hp);
-            numPoisoned++;
+            if (hp > 1)
+            {
+                hp--;
+                SetMonData(pokemon, MON_DATA_HP, &hp);
+                numPoisoned++;
+            }
+            else if (hp == 1)
+            {
+                u32 status = STATUS1_NONE;
+                SetMonData(pokemon, MON_DATA_STATUS, &status);
+                sPoisonSurvivedPartyMask |= (1 << i);
+                numSurvived++;
+            }
         }
         pokemon++;
     }
-    if (numFainted || numPoisoned)
+    if (numSurvived || numPoisoned)
         FldEffPoison_Start();
-    if (numFainted)
+    if (numSurvived)
         return FLDPSN_FNT;
     if (numPoisoned)
         return FLDPSN_PSN;
