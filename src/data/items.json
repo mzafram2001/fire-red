@@ -1507,7 +1507,7 @@
     {
       "english": "MOON STONE",
       "itemId": "ITEM_MOON_STONE",
-      "price": 0,
+      "price": 2100,
       "holdEffect": "HOLD_EFFECT_NONE",
       "holdEffectParam": 0,
       "description_english": "A peculiar stone that makes certain\\nspecies of POK\u00e9MON evolve.\\nIt is as black as the night sky.",
@@ -1779,7 +1779,7 @@
     {
       "english": "HEART SCALE",
       "itemId": "ITEM_HEART_SCALE",
-      "price": 100,
+      "price": 1000,
       "holdEffect": "HOLD_EFFECT_NONE",
       "holdEffectParam": 0,
       "description_english": "A pretty, heart-shaped scale that\\nis extremely rare. It glows faintly\\nin the colors of a rainbow.",
@@ -2995,7 +2995,7 @@
     {
       "english": "KING'S ROCK",
       "itemId": "ITEM_KINGS_ROCK",
-      "price": 100,
+      "price": 3000,
       "holdEffect": "HOLD_EFFECT_FLINCH",
       "holdEffectParam": 10,
       "description_english": "An item to be held by a POK\u00e9MON.\\nIt may cause the foe to flinch\\nupon taking damage.",
@@ -3075,7 +3075,7 @@
     {
       "english": "DEEPSEATOOTH",
       "itemId": "ITEM_DEEP_SEA_TOOTH",
-      "price": 200,
+      "price": 3000,
       "holdEffect": "HOLD_EFFECT_DEEP_SEA_TOOTH",
       "holdEffectParam": 0,
       "description_english": "An item to be held by a POK\u00e9MON.\\nA fang that gleams a sharp silver.\\nIt raises the SP. ATK stat.",
@@ -3091,7 +3091,7 @@
     {
       "english": "DEEPSEASCALE",
       "itemId": "ITEM_DEEP_SEA_SCALE",
-      "price": 200,
+      "price": 3000,
       "holdEffect": "HOLD_EFFECT_DEEP_SEA_SCALE",
       "holdEffectParam": 0,
       "description_english": "An item to be held by a POK\u00e9MON.\\nA scale that shines a faint pink.\\nIt raises the SP. DEF stat.",
@@ -3187,7 +3187,7 @@
     {
       "english": "METAL COAT",
       "itemId": "ITEM_METAL_COAT",
-      "price": 100,
+      "price": 3000,
       "holdEffect": "HOLD_EFFECT_STEEL_POWER",
       "holdEffectParam": 10,
       "description_english": "An item to be held by a POK\u00e9MON.\\nA special metallic film that boosts\\nthe power of STEEL-type moves.",
@@ -3219,7 +3219,7 @@
     {
       "english": "DRAGON SCALE",
       "itemId": "ITEM_DRAGON_SCALE",
-      "price": 2100,
+      "price": 3000,
       "holdEffect": "HOLD_EFFECT_DRAGON_SCALE",
       "holdEffectParam": 10,
       "description_english": "A thick and tough scale.\\nA DRAGON-type POK\u00e9MON may be\\nholding it.",
@@ -3491,7 +3491,7 @@
     {
       "english": "UP-GRADE",
       "itemId": "ITEM_UP_GRADE",
-      "price": 2100,
+      "price": 3000,
       "holdEffect": "HOLD_EFFECT_UP_GRADE",
       "holdEffectParam": 0,
       "description_english": "A transparent device filled with all\\nsorts of data.\\nIt is made by SILPH CO.",
