@@ -94,3 +94,18 @@ VermilionCity_PokemonFanClub_Text_ChairmanReallyAdoresHisMons::
     .string "POKéMON.\p"
     .string "But the person who is most liked by\n"
     .string "POKéMON is DAISY, I think.$"
+
+VermilionCity_PokemonFanClub_Text_GiveTM09::
+    .string "Our CHAIRMAN loves talking about\n"
+    .string "his favorite POKéMON…\p"
+    .string "I prefer the charming voices of\n"
+    .string "cute POKéMON! Here, take this!$"
+
+VermilionCity_PokemonFanClub_Text_ReceivedTM09::
+    .string "{PLAYER} received TM09\n"
+    .string "from the FAN CLUB member!$"
+
+VermilionCity_PokemonFanClub_Text_ExplainTM09::
+    .string "TM09 is DISARMING VOICE.\p"
+    .string "It's a charming cry that does\n"
+    .string "emotional damage that never misses!$"
