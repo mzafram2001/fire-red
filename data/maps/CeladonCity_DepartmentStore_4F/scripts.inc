@@ -41,6 +41,8 @@ CeladonCity_DepartmentStore_4F_Items::
 	.2byte ITEM_DEEP_SEA_TOOTH
 	.2byte ITEM_DEEP_SEA_SCALE
 	.2byte ITEM_HEART_SCALE
+	.2byte ITEM_SEA_INCENSE
+	.2byte ITEM_LAX_INCENSE
 	.2byte ITEM_NONE
 	release
 	end

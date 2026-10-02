@@ -79,7 +79,10 @@ An enhanced and modernized decompilation of **Pokémon FireRed** based on [pret/
     * Clamperl ➔ Huntail *(Level up holding Deep Sea Tooth)*
     * Clamperl ➔ Gorebyss *(Level up holding Deep Sea Scale)*
     * Feebas ➔ Milotic *(Level up holding Heart Scale)*
-* **All Evolutionary Items Available:** Celadon Department Store (4F) now stocks all evolutionary stones, trade hold items, and Heart Scales (Moon Stone, Sun Stone, King's Rock, Metal Coat, Dragon Scale, Up-Grade, Deep Sea Tooth, Deep Sea Scale, Heart Scale) for full solo Pokédex completion.
+* **All Evolutionary Items Available:** Celadon Department Store (4F) now stocks all evolutionary stones, trade hold items, Heart Scales, and baby incenses (Moon Stone, Sun Stone, King's Rock, Metal Coat, Dragon Scale, Up-Grade, Deep Sea Tooth, Deep Sea Scale, Heart Scale, Sea & Lax Incense) for full solo Pokédex completion.
+* **Complete TM Accessibility (50/50):** Added **TM10 (Hidden Power)** to the Celadon Department Store (2F) TM counter, resolving the classic vanilla oversight where TM10 was exclusively locked behind low-probability Pickup ability grinding.
+* **Full Competitive & Type-Boosting Item Availability:** Celadon Department Store (5F) now stocks all competitive battle items (Choice Band, Leftovers, Scope Lens, Focus Band, BrightPowder, Shell Bell, White Herb, Mental Herb, Lucky Egg, Soothe Bell, Light Ball, Thick Club, Stick) and all elemental type boosters (Magnet, Charcoal, Mystic Water, Miracle Seed, etc.).
+* **Specialty Poké Balls Available:** Celadon Department Store (2F) now stocks all specialty Poké Balls (Ultra Ball, Net Ball, Nest Ball, Repeat Ball, Timer Ball, Luxury Ball).
 
 ---
 

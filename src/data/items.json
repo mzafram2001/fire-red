@@ -2867,7 +2867,7 @@
     {
       "english": "BRIGHTPOWDER",
       "itemId": "ITEM_BRIGHT_POWDER",
-      "price": 10,
+      "price": 5000,
       "holdEffect": "HOLD_EFFECT_EVASION_UP",
       "holdEffectParam": 10,
       "description_english": "An item to be held by a POK\u00e9MON.\\nIt casts a tricky glare that lowers\\nthe opponent's accuracy.",
@@ -2883,7 +2883,7 @@
     {
       "english": "WHITE HERB",
       "itemId": "ITEM_WHITE_HERB",
-      "price": 100,
+      "price": 1000,
       "holdEffect": "HOLD_EFFECT_RESTORE_STATS",
       "holdEffectParam": 0,
       "description_english": "An item to be held by a POK\u00e9MON.\\nIt restores any lowered stat in\\nbattle. It can be used only once.",
@@ -2947,7 +2947,7 @@
     {
       "english": "SOOTHE BELL",
       "itemId": "ITEM_SOOTHE_BELL",
-      "price": 100,
+      "price": 3000,
       "holdEffect": "HOLD_EFFECT_FRIENDSHIP_UP",
       "holdEffectParam": 0,
       "description_english": "An item to be held by a POK\u00e9MON.\\nA bell with a comforting chime that\\nmakes the holder calm and friendly.",
@@ -2963,7 +2963,7 @@
     {
       "english": "MENTAL HERB",
       "itemId": "ITEM_MENTAL_HERB",
-      "price": 100,
+      "price": 1000,
       "holdEffect": "HOLD_EFFECT_CURE_ATTRACT",
       "holdEffectParam": 0,
       "description_english": "An item to be held by a POK\u00e9MON.\\nIt snaps the holder out of\\ninfatuation. It can be used once.",
@@ -2979,7 +2979,7 @@
     {
       "english": "CHOICE BAND",
       "itemId": "ITEM_CHOICE_BAND",
-      "price": 100,
+      "price": 5000,
       "holdEffect": "HOLD_EFFECT_CHOICE_BAND",
       "holdEffectParam": 0,
       "description_english": "An item to be held by a POK\u00e9MON.\\nIt powers up one move, which\\nbecomes the only usable one.",
@@ -3011,7 +3011,7 @@
     {
       "english": "SILVERPOWDER",
       "itemId": "ITEM_SILVER_POWDER",
-      "price": 100,
+      "price": 1000,
       "holdEffect": "HOLD_EFFECT_BUG_POWER",
       "holdEffectParam": 10,
       "description_english": "An item to be held by a POK\u00e9MON.\\nA shiny silver powder that boosts\\nthe power of BUG-type moves.",
@@ -3139,7 +3139,7 @@
     {
       "english": "FOCUS BAND",
       "itemId": "ITEM_FOCUS_BAND",
-      "price": 200,
+      "price": 5000,
       "holdEffect": "HOLD_EFFECT_FOCUS_BAND",
       "holdEffectParam": 10,
       "description_english": "An item to be held by a POK\u00e9MON.\\nThe holding POK\u00e9MON may endure an\\nattack, leaving just 1 HP.",
@@ -3155,7 +3155,7 @@
     {
       "english": "LUCKY EGG",
       "itemId": "ITEM_LUCKY_EGG",
-      "price": 200,
+      "price": 5000,
       "holdEffect": "HOLD_EFFECT_LUCKY_EGG",
       "holdEffectParam": 0,
       "description_english": "An item to be held by a POK\u00e9MON.\\nAn egg filled with happiness that\\nearns extra EXP. points in battle.",
@@ -3171,7 +3171,7 @@
     {
       "english": "SCOPE LENS",
       "itemId": "ITEM_SCOPE_LENS",
-      "price": 200,
+      "price": 5000,
       "holdEffect": "HOLD_EFFECT_SCOPE_LENS",
       "holdEffectParam": 0,
       "description_english": "An item to be held by a POK\u00e9MON.\\nA lens that boosts the critical-hit\\nratio of the holding POK\u00e9MON.",
@@ -3203,7 +3203,7 @@
     {
       "english": "LEFTOVERS",
       "itemId": "ITEM_LEFTOVERS",
-      "price": 200,
+      "price": 5000,
       "holdEffect": "HOLD_EFFECT_LEFTOVERS",
       "holdEffectParam": 10,
       "description_english": "An item to be held by a POK\u00e9MON.\\nThe holding POK\u00e9MON gradually\\nregains HP during battle.",
@@ -3235,7 +3235,7 @@
     {
       "english": "LIGHT BALL",
       "itemId": "ITEM_LIGHT_BALL",
-      "price": 100,
+      "price": 3000,
       "holdEffect": "HOLD_EFFECT_LIGHT_BALL",
       "holdEffectParam": 0,
       "description_english": "An orb to be held by a PIKACHU\\nthat raises the SP. ATK stat.\\nTouching it may cause a shock.",
@@ -3251,7 +3251,7 @@
     {
       "english": "SOFT SAND",
       "itemId": "ITEM_SOFT_SAND",
-      "price": 100,
+      "price": 1000,
       "holdEffect": "HOLD_EFFECT_GROUND_POWER",
       "holdEffectParam": 10,
       "description_english": "An item to be held by a POK\u00e9MON.\\nA loose, silky sand that boosts the\\npower of GROUND-type moves.",
@@ -3267,7 +3267,7 @@
     {
       "english": "HARD STONE",
       "itemId": "ITEM_HARD_STONE",
-      "price": 100,
+      "price": 1000,
       "holdEffect": "HOLD_EFFECT_ROCK_POWER",
       "holdEffectParam": 10,
       "description_english": "An item to be held by a POK\u00e9MON.\\nAn unbreakable stone that boosts\\nthe power of ROCK-type moves.",
@@ -3283,7 +3283,7 @@
     {
       "english": "MIRACLE SEED",
       "itemId": "ITEM_MIRACLE_SEED",
-      "price": 100,
+      "price": 1000,
       "holdEffect": "HOLD_EFFECT_GRASS_POWER",
       "holdEffectParam": 10,
       "description_english": "An item to be held by a POK\u00e9MON.\\nA seed imbued with life that boosts\\nthe power of GRASS-type moves.",
@@ -3299,7 +3299,7 @@
     {
       "english": "BLACKGLASSES",
       "itemId": "ITEM_BLACK_GLASSES",
-      "price": 100,
+      "price": 1000,
       "holdEffect": "HOLD_EFFECT_DARK_POWER",
       "holdEffectParam": 10,
       "description_english": "An item to be held by a POK\u00e9MON.\\nA shady-looking pair of glasses\\nthat boosts DARK-type moves.",
@@ -3315,7 +3315,7 @@
     {
       "english": "BLACK BELT",
       "itemId": "ITEM_BLACK_BELT",
-      "price": 100,
+      "price": 1000,
       "holdEffect": "HOLD_EFFECT_FIGHTING_POWER",
       "holdEffectParam": 10,
       "description_english": "An item to be held by a POK\u00e9MON.\\nA belt that boosts determination\\nand FIGHTING-type moves.",
@@ -3331,7 +3331,7 @@
     {
       "english": "MAGNET",
       "itemId": "ITEM_MAGNET",
-      "price": 100,
+      "price": 1000,
       "holdEffect": "HOLD_EFFECT_ELECTRIC_POWER",
       "holdEffectParam": 10,
       "description_english": "An item to be held by a POK\u00e9MON.\\nA powerful magnet that boosts the\\npower of ELECTRIC-type moves.",
@@ -3347,7 +3347,7 @@
     {
       "english": "MYSTIC WATER",
       "itemId": "ITEM_MYSTIC_WATER",
-      "price": 100,
+      "price": 1000,
       "holdEffect": "HOLD_EFFECT_WATER_POWER",
       "holdEffectParam": 10,
       "description_english": "An item to be held by a POK\u00e9MON.\\nA teardrop-shaped gem that boosts\\nthe power of WATER-type moves.",
@@ -3363,7 +3363,7 @@
     {
       "english": "SHARP BEAK",
       "itemId": "ITEM_SHARP_BEAK",
-      "price": 100,
+      "price": 1000,
       "holdEffect": "HOLD_EFFECT_FLYING_POWER",
       "holdEffectParam": 10,
       "description_english": "An item to be held by a POK\u00e9MON.\\nA long, sharp beak that boosts the\\npower of FLYING-type moves.",
@@ -3379,7 +3379,7 @@
     {
       "english": "POISON BARB",
       "itemId": "ITEM_POISON_BARB",
-      "price": 100,
+      "price": 1000,
       "holdEffect": "HOLD_EFFECT_POISON_POWER",
       "holdEffectParam": 10,
       "description_english": "An item to be held by a POK\u00e9MON.\\nA small, poisonous barb that boosts\\nthe power of POISON-type moves.",
@@ -3395,7 +3395,7 @@
     {
       "english": "NEVERMELTICE",
       "itemId": "ITEM_NEVER_MELT_ICE",
-      "price": 100,
+      "price": 1000,
       "holdEffect": "HOLD_EFFECT_ICE_POWER",
       "holdEffectParam": 10,
       "description_english": "An item to be held by a POK\u00e9MON.\\nA piece of ice that repels heat\\nand boosts ICE-type moves.",
@@ -3411,7 +3411,7 @@
     {
       "english": "SPELL TAG",
       "itemId": "ITEM_SPELL_TAG",
-      "price": 100,
+      "price": 1000,
       "holdEffect": "HOLD_EFFECT_GHOST_POWER",
       "holdEffectParam": 10,
       "description_english": "An item to be held by a POK\u00e9MON.\\nA sinister, eerie tag that boosts\\nGHOST-type moves.",
@@ -3427,7 +3427,7 @@
     {
       "english": "TWISTEDSPOON",
       "itemId": "ITEM_TWISTED_SPOON",
-      "price": 100,
+      "price": 1000,
       "holdEffect": "HOLD_EFFECT_PSYCHIC_POWER",
       "holdEffectParam": 10,
       "description_english": "An item to be held by a POK\u00e9MON.\\nA spoon imbued with telekinetic\\npower boosts PSYCHIC-type moves.",
@@ -3443,7 +3443,7 @@
     {
       "english": "CHARCOAL",
       "itemId": "ITEM_CHARCOAL",
-      "price": 9800,
+      "price": 1000,
       "holdEffect": "HOLD_EFFECT_FIRE_POWER",
       "holdEffectParam": 10,
       "description_english": "An item to be held by a POK\u00e9MON.\\nA combustible fuel that boosts the\\npower of FIRE-type moves.",
@@ -3475,7 +3475,7 @@
     {
       "english": "SILK SCARF",
       "itemId": "ITEM_SILK_SCARF",
-      "price": 100,
+      "price": 1000,
       "holdEffect": "HOLD_EFFECT_NORMAL_POWER",
       "holdEffectParam": 10,
       "description_english": "An item to be held by a POK\u00e9MON.\\nA sumptuous scarf that boosts the\\npower of NORMAL-type moves.",
@@ -3507,7 +3507,7 @@
     {
       "english": "SHELL BELL",
       "itemId": "ITEM_SHELL_BELL",
-      "price": 200,
+      "price": 5000,
       "holdEffect": "HOLD_EFFECT_SHELL_BELL",
       "holdEffectParam": 8,
       "description_english": "An item to be held by a POK\u00e9MON.\\nThe holding POK\u00e9MON regains some\\nHP upon striking the foe.",
@@ -3523,7 +3523,7 @@
     {
       "english": "SEA INCENSE",
       "itemId": "ITEM_SEA_INCENSE",
-      "price": 9600,
+      "price": 5000,
       "holdEffect": "HOLD_EFFECT_WATER_POWER",
       "holdEffectParam": 5,
       "description_english": "An item to be held by a POK\u00e9MON.\\nIt slightly boosts the power of\\nWATER-type moves.",
@@ -3539,7 +3539,7 @@
     {
       "english": "LAX INCENSE",
       "itemId": "ITEM_LAX_INCENSE",
-      "price": 9600,
+      "price": 5000,
       "holdEffect": "HOLD_EFFECT_EVASION_UP",
       "holdEffectParam": 5,
       "description_english": "An item to be held by a POK\u00e9MON.\\nIts tricky aroma slightly reduces\\nthe foe's accuracy.",
@@ -3587,7 +3587,7 @@
     {
       "english": "THICK CLUB",
       "itemId": "ITEM_THICK_CLUB",
-      "price": 500,
+      "price": 3000,
       "holdEffect": "HOLD_EFFECT_THICK_CLUB",
       "holdEffectParam": 0,
       "description_english": "A hard bone of some sort to be\\nheld by a CUBONE or MAROWAK.\\nIt raises the ATTACK stat.",
@@ -3603,7 +3603,7 @@
     {
       "english": "STICK",
       "itemId": "ITEM_STICK",
-      "price": 200,
+      "price": 2000,
       "holdEffect": "HOLD_EFFECT_STICK",
       "holdEffectParam": 0,
       "description_english": "A stick of leek to be held by a\\nFARFETCH'D. It raises FARFETCH'D's\\ncritical-hit ratio.",
